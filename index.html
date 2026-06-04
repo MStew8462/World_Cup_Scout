@@ -411,6 +411,7 @@
             }
         }
 
+                // ADVANCED SCROLL SCANNED PARSE ENGINE
         function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
@@ -433,8 +434,21 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // Native structural label assignment
+                // 1. Initial string passing filter
                 obj.CleanName = obj.Player;
+                
+                // 2. CRITICAL SC scouting alignment interceptor fixes
+                let rawCheck = String(obj.Player).toUpperCase();
+                if (rawCheck.includes("MAHREZ")) {
+                    obj.CleanName = "Riyad Mahrez";
+                }
+                if (rawCheck.includes("BELGHALI")) {
+                    obj.CleanName = "Rafik Belghali";
+                }
+                if (rawCheck.includes("ALFIE") || (rawCheck.includes("JONES") && String(obj.Club).toUpperCase().includes("HULL"))) {
+                    obj.CleanName = "Alfie Jones";
+                }
+                
                 return obj;
             });
         }
