@@ -32,7 +32,6 @@
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
         h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 24px 0 10px 0; letter-spacing: 0.5px;}
 
-        /* Premium Filter Suite */
         .filter-wrapper {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 10px; padding: 12px; margin-bottom: 16px;
@@ -49,7 +48,6 @@
             padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none;
         }
 
-        /* Twin Comparison Deck */
         .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .scout-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
@@ -67,7 +65,6 @@
         }
         .bio-strip span strong { color: white; font-weight: 600; }
 
-        /* Performance Attribute Rows */
         .matrix-row-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 6px; padding: 8px 12px; margin-bottom: 5px;
@@ -78,7 +75,6 @@
         .val-box.right { text-align: right; }
         .metric-label { width: 50%; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
 
-        /* Custom Data Badges */
         .scout-badge {
             display: inline-block; padding: 2px 6px; font-weight: 700;
             border-radius: 4px; font-size: 11px; min-width: 16px; text-align: center;
@@ -87,7 +83,6 @@
         .tier-good { background: rgba(0,210,255,0.1); color: var(--neon-blue); border: 1px solid rgba(0,210,255,0.25); }
         .tier-avg { background: rgba(255,184,0,0.1); color: var(--amber-gold); border: 1px solid rgba(255,184,0,0.25); }
 
-        /* Dynamic Navigation Tabs */
         .tab-bar { display: flex; gap: 16px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; }
         .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 700; padding: 8px 4px; cursor: pointer; }
         .tab-btn.active { color: var(--neon-blue); border-bottom: 2px solid var(--neon-blue); }
@@ -143,7 +138,7 @@
             <div class="scout-card">
                 <div class="card-header-block">
                     <div>
-                        <div class="p-name" id="nameA">-</div>
+                        <div class="p-name" id="nameA">Loading...</div>
                         <div class="p-club" id="clubA">-</div>
                     </div>
                     <div class="rating-pct" id="scoreA">0%</div>
@@ -153,7 +148,7 @@
             <div class="scout-card">
                 <div class="card-header-block">
                     <div>
-                        <div class="p-name" id="nameB">-</div>
+                        <div class="p-name" id="nameB">Loading...</div>
                         <div class="p-club" id="clubB">-</div>
                     </div>
                     <div class="rating-pct" id="scoreB">0%</div>
@@ -171,29 +166,8 @@
     </div>
 
     <script>
-        // IMMUTABLE EMBEDDED TOURNAMENT DATA MATRIX (Guarantees zero security crashes)
-        const WORLD_CUP_DATABASE = [
-            { name: "Lionel Messi", nation: "ARG", club: "Inter Miami CF (USA)", pos: "FW", dob: "24/06/1987", height: 170, seedRating: 93 },
-            { name: "Julian Alvarez", nation: "ARG", club: "Atlético De Madrid (ESP)", pos: "FW", dob: "31/01/2000", height: 170, seedRating: 87 },
-            { name: "Lautaro Martinez", nation: "ARG", club: "FC Internazionale Milano (ITA)", pos: "FW", dob: "22/08/1997", height: 175, seedRating: 89 },
-            { name: "Alexis Mac Allister", nation: "ARG", club: "Liverpool FC (ENG)", pos: "MF", dob: "24/12/1998", height: 176, seedRating: 88 },
-            { name: "Enzo Fernandez", nation: "ARG", club: "Chelsea FC (ENG)", pos: "MF", dob: "17/01/2001", height: 178, seedRating: 86 },
-            { name: "Lisandro Martinez", nation: "ARG", club: "Manchester United FC (ENG)", pos: "DF", dob: "18/01/1998", height: 175, seedRating: 87 },
-            { name: "Harry Kane", nation: "ENG", club: "FC Bayern München (GER)", pos: "FW", dob: "28/07/1993", height: 190, seedRating: 92 },
-            { name: "Bukayo Saka", nation: "ENG", club: "Arsenal FC (ENG)", pos: "FW", dob: "05/09/2001", height: 178, seedRating: 91 },
-            { name: "Declan Rice", nation: "ENG", club: "Arsenal FC (ENG)", pos: "MF", dob: "14/01/1999", height: 185, seedRating: 89 },
-            { name: "Jude Bellingham", nation: "ENG", club: "Real Madrid C. F. (ESP)", pos: "MF", dob: "29/06/2003", height: 183, seedRating: 94 },
-            { name: "Kobbie Mainoo", nation: "ENG", club: "Manchester United FC (ENG)", pos: "MF", dob: "19/04/2005", height: 183, seedRating: 85 },
-            { name: "Kylian Mbappe", nation: "FRA", club: "Real Madrid C. F. (ESP)", pos: "FW", dob: "20/12/1998", height: 180, seedRating: 95 },
-            { name: "Ousmane Dembele", nation: "FRA", club: "Paris Saint-Germain (FRA)", pos: "FW", dob: "15/05/1997", height: 179, seedRating: 87 },
-            { name: "Aurelien Tchouameni", nation: "FRA", club: "Real Madrid C. F. (ESP)", pos: "MF", dob: "27/01/2000", height: 188, seedRating: 89 },
-            { name: "William Saliba", nation: "FRA", club: "Arsenal FC (ENG)", pos: "DF", dob: "24/03/2001", height: 192, seedRating: 91 },
-            { name: "Florian Wirtz", nation: "GER", club: "Liverpool FC (ENG)", pos: "MF", dob: "03/05/2003", height: 176, seedRating: 92 },
-            { name: "Jamal Musiala", nation: "GER", club: "FC Bayern München (GER)", pos: "MF", dob: "26/02/2003", height: 180, seedRating: 92 },
-            { name: "Vinicius Junior", nation: "BRA", club: "Real Madrid C. F. (ESP)", pos: "FW", dob: "12/07/2000", height: 176, seedRating: 94 },
-            { name: "Amad Diallo", nation: "CIV", club: "Manchester United FC (ENG)", pos: "FW", dob: "11/07/2002", height: 173, seedRating: 84 },
-            { name: "Bruno Guimaraes", nation: "BRA", club: "Newcastle United FC (ENG)", pos: "MF", dob: "16/11/1997", height: 182, seedRating: 88 }
-        ];
+        // Global variables loaded dynamically from your CSV
+        let WORLD_CUP_DATABASE = [];
 
         const scoutingAttributes = [
             "Finishing", "BallControl", "Passing Accuracy", "Crossing", "Dribbling", 
@@ -209,34 +183,49 @@
             "BallWinner": { core: ["Defensive Tacking", "Interceptions", "Press Recovery", "Stamina"] }
         };
 
-        function generateScoutingProfile(player, roleKey) {
-            let baseSeed = player.seedRating;
-            let profile = profileWeightingMatrices[roleKey];
-            let stats = {};
-
-            scoutingAttributes.forEach(attr => {
-                let rating = Math.floor((baseSeed / 100) * 15) + (player.name.charCodeAt(1) % 3) + 2;
-                if (profile.core.includes(attr)) rating += 3;
+        // 1. LIVE REPOSITORY FETCH ENGINE (Relative path - safe from CORS security block)
+        async function loadTournamentDatabase() {
+            try {
+                const response = await fetch('./world_cup_2026_master.csv');
+                if (!response.ok) throw new Error("Spreadsheet file missing in repository folder");
                 
-                if (rating > 20) rating = 20;
-                if (rating < 7) rating = 7;
-                stats[attr] = rating;
-            });
-            return stats;
+                const csvText = await response.text();
+                WORLD_CUP_DATABASE = parseCSVEngine(csvText);
+                
+                // Fire up data flow once parsing completes successfully
+                runDataPipeline();
+            } catch (error) {
+                document.getElementById('nameA').innerText = "Data Error";
+                document.getElementById('nameB').innerText = "Data Error";
+                console.error("Critical Parse Error:", error.message);
+            }
         }
 
-        function computeOverallRoleScore(stats, roleKey) {
+        function parseCSVEngine(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length < 2) return [];
+            
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const fields = line.split(',').map(f => f.trim());
+                let obj = {};
+                headers.forEach((h, idx) => {
+                    let val = fields[idx];
+                    obj[h] = isNaN(val) ? val : parseFloat(val);
+                });
+                return obj;
+            });
+        }
+
+        // 2. MATH ENGINE ARCHITECTURE
+        function computeOverallRoleScore(player, roleKey) {
             let coreAttrs = profileWeightingMatrices[roleKey].core;
             let total = 0;
-            coreAttrs.forEach(a => total += stats[a]);
+            // Fallback default metric value of 10 if player data column is unpopulated
+            coreAttrs.forEach(a => total += (parseFloat(player[a]) || 10));
             return ((total / (coreAttrs.length * 20)) * 100).toFixed(0);
         }
-
-        document.getElementById('roleSelector').addEventListener('change', runDataPipeline);
-        document.getElementById('nationSelector').addEventListener('change', runDataPipeline);
-        document.getElementById('playerSearch').addEventListener('input', runDataPipeline);
-        document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
-        document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
 
         function switchView(target) {
             document.getElementById('tabH2h').classList.toggle('active', target === 'h2h');
@@ -245,73 +234,78 @@
             document.getElementById('viewList').classList.toggle('hidden', target !== 'list');
         }
 
+        // 3. SELECTION FILTER CONTROLLER PIPELINE
         function runDataPipeline() {
+            if (WORLD_CUP_DATABASE.length === 0) return;
+
             const role = document.getElementById('roleSelector').value;
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
             let processed = WORLD_CUP_DATABASE.map(p => {
-                let stats = generateScoutingProfile(p, role);
-                let fitScore = computeOverallRoleScore(stats, role);
-                return { ...p, stats: stats, fitScore: fitScore };
+                let fitScore = computeOverallRoleScore(p, role);
+                return { ...p, fitScore: parseInt(fitScore) };
             });
 
-            if (nation !== 'all') processed = processed.filter(p => p.nation === nation);
-            if (query) processed = processed.filter(p => p.name.toLowerCase().includes(query));
+            if (nation !== 'all') processed = processed.filter(p => p.Nation === nation);
+            if (query) processed = processed.filter(p => p.Player.toLowerCase().includes(query));
 
             processed.sort((a, b) => b.fitScore - a.fitScore);
 
             const sA = document.getElementById('selPlayerA');
             const sB = document.getElementById('selPlayerB');
+            
+            // Retain selection values to prevent reset loop jumps during drop-down updates
+            const prevA = sA.value; const prevB = sB.value;
+            
             sA.innerHTML = ''; sB.innerHTML = '';
 
             if (processed.length > 0) {
                 processed.forEach(p => {
-                    sA.appendChild(new Option(`${p.name} (${p.fitScore}%)`, p.name));
-                    sB.appendChild(new Option(`${p.name} (${p.fitScore}%)`, p.name));
+                    sA.appendChild(new Option(`${p.Player} (${p.fitScore}%)`, p.Player));
+                    sB.appendChild(new Option(`${p.Player} (${p.fitScore}%)`, p.Player));
                 });
-                sA.selectedIndex = 0;
-                sB.selectedIndex = processed.length > 1 ? 1 : 0;
+                
+                sA.value = processed.some(p => p.Player === prevA) ? prevA : processed[0].Player;
+                sB.value = processed.some(p => p.Player === prevB) ? prevB : (processed[1] ? processed[1].Player : processed[0].Player);
 
                 renderRankingsLayout(processed);
                 renderComparisonCards();
             }
         }
 
+        // 4. CARD MATRIX RENDER GENERATOR
         function renderComparisonCards() {
             const role = document.getElementById('roleSelector').value;
             const nameA = document.getElementById('selPlayerA').value;
             const nameB = document.getElementById('selPlayerB').value;
 
-            let updatedList = WORLD_CUP_DATABASE.map(p => {
-                let stats = generateScoutingProfile(p, role);
-                let fitScore = computeOverallRoleScore(stats, role);
-                return { ...p, stats: stats, fitScore: fitScore };
-            });
-
-            const pA = updatedList.find(p => p.name === nameA);
-            const pB = updatedList.find(p => p.name === nameB);
+            const pA = WORLD_CUP_DATABASE.find(p => p.Player === nameA);
+            const pB = WORLD_CUP_DATABASE.find(p => p.Player === nameB);
 
             if (!pA || !pB) return;
 
-            document.getElementById('nameA').innerText = pA.name;
-            document.getElementById('clubA').innerText = pA.club;
-            document.getElementById('scoreA').innerText = `${pA.fitScore}%`;
+            let scoreA = computeOverallRoleScore(pA, role);
+            let scoreB = computeOverallRoleScore(pB, role);
+
+            document.getElementById('nameA').innerText = pA.Player;
+            document.getElementById('clubA').innerText = pA.Club || 'Unknown';
+            document.getElementById('scoreA').innerText = `${scoreA}%`;
             document.getElementById('bioA').innerHTML = `
-                <span>Nation: <strong>${pA.nation}</strong></span>
-                <span>Pos: <strong>${pA.pos}</strong></span>
-                <span>Born: <strong>${pA.dob}</strong></span>
-                <span>Height: <strong>${pA.height} cm</strong></span>
+                <span>Nation: <strong>${pA.Nation || '-'}</strong></span>
+                <span>Pos: <strong>${pA.Position || '-'}</strong></span>
+                <span>Age: <strong>${pA.Age || '-'}</strong></span>
+                <span>Height: <strong>${pA.Height || '-'} cm</strong></span>
             `;
 
-            document.getElementById('nameB').innerText = pB.name;
-            document.getElementById('clubB').innerText = pB.club;
-            document.getElementById('scoreB').innerText = `${pB.fitScore}%`;
+            document.getElementById('nameB').innerText = pB.Player;
+            document.getElementById('clubB').innerText = pB.Club || 'Unknown';
+            document.getElementById('scoreB').innerText = `${scoreB}%`;
             document.getElementById('bioB').innerHTML = `
-                <span>Nation: <strong>${pB.nation}</strong></span>
-                <span>Pos: <strong>${pB.pos}</strong></span>
-                <span>Born: <strong>${pB.dob}</strong></span>
-                <span>Height: <strong>${pB.height} cm</strong></span>
+                <span>Nation: <strong>${pB.Nation || '-'}</strong></span>
+                <span>Pos: <strong>${pB.Position || '-'}</strong></span>
+                <span>Age: <strong>${pB.Age || '-'}</strong></span>
+                <span>Height: <strong>${pB.Height || '-'} cm</strong></span>
             `;
 
             const container = document.getElementById('matrixAnchor');
@@ -320,7 +314,8 @@
             let coreAttrs = profileWeightingMatrices[role].core;
 
             scoutingAttributes.forEach(attr => {
-                let vA = pA.stats[attr]; let vB = pB.stats[attr];
+                let vA = parseInt(pA[attr]) || 10; 
+                let vB = parseInt(pB[attr]) || 10;
                 let isCore = coreAttrs.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
 
                 let div = document.createElement('div');
@@ -344,8 +339,8 @@
                 div.className = 'list-row';
                 div.innerHTML = `
                     <div>
-                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.name}</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.club} — ${p.nation}</div>
+                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.Player}</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — ${p.Nation || '-'}</div>
                     </div>
                     <div style="font-weight:800; color:var(--emerald-green); font-size:14px;">${p.fitScore}% Match</div>
                 `;
@@ -353,7 +348,8 @@
             });
         }
 
-        window.onload = runDataPipeline;
+        // Initialize loader cycle
+        window.onload = loadTournamentDatabase;
     </script>
 </body>
 </html>
