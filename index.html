@@ -30,8 +30,9 @@
         h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; margin: 0 0 4px 0; color: #ffffff; }
         .accent-txt { color: var(--neon-blue); }
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
-        h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 24px 0 10px 0; letter-spacing: 0.5px;}
+        h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 20px 0 10px 0; letter-spacing: 0.5px;}
 
+        /* Premium Filter Suite */
         .filter-wrapper {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 10px; padding: 12px; margin-bottom: 16px;
@@ -48,6 +49,7 @@
             padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none;
         }
 
+        /* Twin Comparison Deck */
         .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .scout-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
@@ -65,6 +67,7 @@
         }
         .bio-strip span strong { color: white; font-weight: 600; }
 
+        /* Performance Attribute Rows */
         .matrix-row-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 6px; padding: 8px 12px; margin-bottom: 5px;
@@ -75,6 +78,7 @@
         .val-box.right { text-align: right; }
         .metric-label { width: 50%; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
 
+        /* Custom Data Badges */
         .scout-badge {
             display: inline-block; padding: 2px 6px; font-weight: 700;
             border-radius: 4px; font-size: 11px; min-width: 16px; text-align: center;
@@ -83,13 +87,15 @@
         .tier-good { background: rgba(0,210,255,0.1); color: var(--neon-blue); border: 1px solid rgba(0,210,255,0.25); }
         .tier-avg { background: rgba(255,184,0,0.1); color: var(--amber-gold); border: 1px solid rgba(255,184,0,0.25); }
 
+        /* 3-Tab Interface Settings */
         .tab-bar { display: flex; gap: 16px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; }
         .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 700; padding: 8px 4px; cursor: pointer; }
         .tab-btn.active { color: var(--neon-blue); border-bottom: 2px solid var(--neon-blue); }
         
         .list-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 4px; border-bottom: 1px solid var(--border-muted);
+            padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-muted);
+            border-radius: 8px; margin-bottom: 6px;
         }
         .hidden { display: none !important; }
     </style>
@@ -104,20 +110,22 @@
         <div class="filter-grid">
             <div>
                 <select id="roleSelector">
-                    <option value="TargetMan">Profile: Target No.9</option>
-                    <option value="InsideForward">Profile: Inside Forward</option>
-                    <option value="DLP">Profile: Deep-Lying Progressor</option>
-                    <option value="BallWinner">Profile: Defensive Destroyer</option>
+                    <option value="TargetMan">Profile: Target No.9 (FW)</option>
+                    <option value="InsideForward">Profile: Inside Forward (FW)</option>
+                    <option value="DLP">Profile: Deep-Lying Progressor (MF)</option>
+                    <option value="BallWinner">Profile: Defensive Destroyer (MF)</option>
                 </select>
             </div>
             <div>
                 <select id="nationSelector">
-                    <option value="all">All Squads</option>
+                    <option value="all">All Nations</option>
+                    <option value="ALG">Algeria</option>
                     <option value="ARG">Argentina</option>
+                    <option value="BRA">Brazil</option>
                     <option value="ENG">England</option>
                     <option value="FRA">France</option>
                     <option value="GER">Germany</option>
-                    <option value="BRA">Brazil</option>
+                    <option value="POR">Portugal</option>
                 </select>
             </div>
         </div>
@@ -125,7 +133,8 @@
 
     <div class="tab-bar">
         <button class="tab-btn active" id="tabH2h" onclick="switchView('h2h')">H2H Comparison</button>
-        <button class="tab-btn" id="tabList" onclick="switchView('list')">Rankings Matrix</button>
+        <button class="tab-btn" id="tabList" onclick="switchView('list')">Role Rankings</button>
+        <button class="tab-btn" id="tabRoster" onclick="switchView('roster')">Complete Roster Database</button>
     </div>
 
     <div id="viewH2h">
@@ -138,7 +147,7 @@
             <div class="scout-card">
                 <div class="card-header-block">
                     <div>
-                        <div class="p-name" id="nameA">Loading...</div>
+                        <div class="p-name" id="nameA">Synchronizing CSV...</div>
                         <div class="p-club" id="clubA">-</div>
                     </div>
                     <div class="rating-pct" id="scoreA">0%</div>
@@ -148,7 +157,7 @@
             <div class="scout-card">
                 <div class="card-header-block">
                     <div>
-                        <div class="p-name" id="nameB">Loading...</div>
+                        <div class="p-name" id="nameB">Synchronizing CSV...</div>
                         <div class="p-club" id="clubB">-</div>
                     </div>
                     <div class="rating-pct" id="scoreB">0%</div>
@@ -165,8 +174,11 @@
         <div id="rankingsAnchor"></div>
     </div>
 
+    <div id="viewRoster" class="hidden">
+        <div id="rosterAnchor"></div>
+    </div>
+
     <script>
-        // Global variables loaded dynamically from your CSV
         let WORLD_CUP_DATABASE = [];
 
         const scoutingAttributes = [
@@ -177,36 +189,32 @@
         ];
 
         const profileWeightingMatrices = {
-            "TargetMan": { core: ["Finishing", "Composure", "Physical Strength", "Aerial Duel"] },
-            "InsideForward": { core: ["Dribbling", "Acceleration", "Finishing", "Agility"] },
-            "DLP": { core: ["Passing Accuracy", "Vision", "BallControl", "Decision Making"] },
-            "BallWinner": { core: ["Defensive Tacking", "Interceptions", "Press Recovery", "Stamina"] }
+            "TargetMan": { type: "FW", core: ["Finishing", "Composure", "Physical Strength", "Aerial Duel"] },
+            "InsideForward": { type: "FW", core: ["Dribbling", "Acceleration", "Finishing", "Agility"] },
+            "DLP": { type: "MF", core: ["Passing Accuracy", "Vision", "BallControl", "Decision Making"] },
+            "BallWinner": { type: "MF", core: ["Defensive Tacking", "Interceptions", "Press Recovery", "Stamina"] }
         };
 
-        // 1. LIVE REPOSITORY FETCH ENGINE (Relative path - safe from CORS security block)
         async function loadTournamentDatabase() {
             try {
                 const response = await fetch('./world_cup_2026_master.csv');
-                if (!response.ok) throw new Error("Spreadsheet file missing in repository folder");
+                if (!response.ok) throw new Error("Spreadsheet file missing in folder location.");
                 
                 const csvText = await response.text();
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 
-                // Fire up data flow once parsing completes successfully
                 runDataPipeline();
             } catch (error) {
-                document.getElementById('nameA').innerText = "Data Error";
-                document.getElementById('nameB').innerText = "Data Error";
-                console.error("Critical Parse Error:", error.message);
+                document.getElementById('nameA').innerText = "CSV Link Error";
+                document.getElementById('nameB').innerText = "CSV Link Error";
+                console.error("Pipeline Sync Interrupted:", error.message);
             }
         }
 
         function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
-            
             const headers = lines[0].split(',').map(h => h.trim());
-            
             return lines.slice(1).map(line => {
                 const fields = line.split(',').map(f => f.trim());
                 let obj = {};
@@ -218,70 +226,82 @@
             });
         }
 
-        // 2. MATH ENGINE ARCHITECTURE
         function computeOverallRoleScore(player, roleKey) {
             let coreAttrs = profileWeightingMatrices[roleKey].core;
             let total = 0;
-            // Fallback default metric value of 10 if player data column is unpopulated
             coreAttrs.forEach(a => total += (parseFloat(player[a]) || 10));
             return ((total / (coreAttrs.length * 20)) * 100).toFixed(0);
         }
 
-        function switchView(target) {
-            document.getElementById('tabH2h').classList.toggle('active', target === 'h2h');
-            document.getElementById('tabList').classList.toggle('active', target === 'list');
-            document.getElementById('viewH2h').classList.toggle('hidden', target !== 'h2h');
-            document.getElementById('viewList').classList.toggle('hidden', target !== 'list');
+        function findBestSuitedRole(player) {
+            let highRole = ""; let maxScore = -1;
+            Object.keys(profileWeightingMatrices).forEach(rk => {
+                let s = parseInt(computeOverallRoleScore(player, rk));
+                if (s > maxScore) { maxScore = s; highRole = rk; }
+            });
+            // Returns a clean reading text mapping for layout profiles
+            const readableNames = { "TargetMan": "Target No.9", "InsideForward": "Inside Forward", "DLP": "Deep Progressor", "BallWinner": "Destroyer" };
+            return readableNames[highRole] || "Generalist";
         }
 
-        // 3. SELECTION FILTER CONTROLLER PIPELINE
+        function switchView(target) {
+            ['h2h', 'list', 'roster'].forEach(t => {
+                document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === target);
+                document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('hidden', t !== target);
+            });
+        }
+
+        document.getElementById('roleSelector').addEventListener('change', runDataPipeline);
+        document.getElementById('nationSelector').addEventListener('change', runDataPipeline);
+        document.getElementById('playerSearch').addEventListener('input', runDataPipeline);
+        document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
+        document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
+
         function runDataPipeline() {
             if (WORLD_CUP_DATABASE.length === 0) return;
 
             const role = document.getElementById('roleSelector').value;
+            const targetType = profileWeightingMatrices[role].type;
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
-            let processed = WORLD_CUP_DATABASE.map(p => {
+            // 1. POPULATE H2H DROP-DOWNS: Global, role-appropriate filters across all 48 teams
+            let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
+            
+            const sA = document.getElementById('selPlayerA');
+            const sB = document.getElementById('selPlayerB');
+            const prevA = sA.value; const prevB = sB.value;
+            
+            sA.innerHTML = ''; sB.innerHTML = '';
+            dropdownList.forEach(p => {
+                sA.appendChild(new Option(p.Player, p.Player));
+                sB.appendChild(new Option(p.Player, p.Player));
+            });
+            sA.value = dropdownList.some(p => p.Player === prevA) ? prevA : dropdownList[0]?.Player;
+            sB.value = dropdownList.some(p => p.Player === prevB) ? prevB : (dropdownList[1] ? dropdownList[1].Player : dropdownList[0]?.Player);
+
+            // 2. LAYER CONTROLLER: Rankings and Roster calculation sets
+            let activeDataset = WORLD_CUP_DATABASE.map(p => {
                 let fitScore = computeOverallRoleScore(p, role);
                 return { ...p, fitScore: parseInt(fitScore) };
             });
 
-            if (nation !== 'all') processed = processed.filter(p => p.Nation === nation);
-            if (query) processed = processed.filter(p => p.Player.toLowerCase().includes(query));
+            // Base Filters Cascade
+            if (nation !== 'all') activeDataset = activeDataset.filter(p => p.Nation === nation);
+            if (query) activeDataset = activeDataset.filter(p => p.Player.toLowerCase().includes(query));
 
-            processed.sort((a, b) => b.fitScore - a.fitScore);
+            // Separate Rankings filter rules strictly bounded by designated positions
+            let rankingsSet = activeDataset.filter(p => p.Position === targetType).sort((a,b) => b.fitScore - a.fitScore);
 
-            const sA = document.getElementById('selPlayerA');
-            const sB = document.getElementById('selPlayerB');
-            
-            // Retain selection values to prevent reset loop jumps during drop-down updates
-            const prevA = sA.value; const prevB = sB.value;
-            
-            sA.innerHTML = ''; sB.innerHTML = '';
-
-            if (processed.length > 0) {
-                processed.forEach(p => {
-                    sA.appendChild(new Option(`${p.Player} (${p.fitScore}%)`, p.Player));
-                    sB.appendChild(new Option(`${p.Player} (${p.fitScore}%)`, p.Player));
-                });
-                
-                sA.value = processed.some(p => p.Player === prevA) ? prevA : processed[0].Player;
-                sB.value = processed.some(p => p.Player === prevB) ? prevB : (processed[1] ? processed[1].Player : processed[0].Player);
-
-                renderRankingsLayout(processed);
-                renderComparisonCards();
-            }
+            renderRankingsLayout(rankingsSet);
+            renderRosterLayout(activeDataset);
+            renderComparisonCards();
         }
 
-        // 4. CARD MATRIX RENDER GENERATOR
         function renderComparisonCards() {
             const role = document.getElementById('roleSelector').value;
-            const nameA = document.getElementById('selPlayerA').value;
-            const nameB = document.getElementById('selPlayerB').value;
-
-            const pA = WORLD_CUP_DATABASE.find(p => p.Player === nameA);
-            const pB = WORLD_CUP_DATABASE.find(p => p.Player === nameB);
+            const pA = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerA').value);
+            const pB = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerB').value);
 
             if (!pA || !pB) return;
 
@@ -310,14 +330,11 @@
 
             const container = document.getElementById('matrixAnchor');
             container.innerHTML = '';
-
             let coreAttrs = profileWeightingMatrices[role].core;
 
             scoutingAttributes.forEach(attr => {
-                let vA = parseInt(pA[attr]) || 10; 
-                let vB = parseInt(pB[attr]) || 10;
+                let vA = parseInt(pA[attr]) || 10; let vB = parseInt(pB[attr]) || 10;
                 let isCore = coreAttrs.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
-
                 let div = document.createElement('div');
                 div.className = 'matrix-row-card';
                 div.innerHTML = `
@@ -333,7 +350,7 @@
 
         function renderRankingsLayout(list) {
             const anchor = document.getElementById('rankingsAnchor');
-            anchor.innerHTML = '';
+            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matching position role profiles located.</div>' : '';
             list.forEach((p, idx) => {
                 let div = document.createElement('div');
                 div.className = 'list-row';
@@ -348,7 +365,24 @@
             });
         }
 
-        // Initialize loader cycle
+        function renderRosterLayout(list) {
+            const anchor = document.getElementById('rosterAnchor');
+            anchor.innerHTML = '';
+            list.forEach(p => {
+                let bestRole = findBestSuitedRole(p);
+                let div = document.createElement('div');
+                div.className = 'list-row';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:700; font-size:14px; color:white;">${p.Player} (${p.Position || '-'})</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — Nation: ${p.Nation || '-'} — Age: ${p.Age || '-'}</div>
+                    </div>
+                    <div style="font-weight:600; color:var(--neon-blue); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Best: ${bestRole}</div>
+                `;
+                anchor.appendChild(div);
+            });
+        }
+
         window.onload = loadTournamentDatabase;
     </script>
 </body>
