@@ -293,14 +293,14 @@
             "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", metrics: [{ name: "Clearances_per90", target: 1.5, weight: 0.4 }, { name: "PassesAttempted_per90", target: 35.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 84.0, weight: 0.3 }] }
         };
 
-        // ADVANCED FLIP ENGINE: Splits, cleans, and locks format to "First Name Last Name"
+        // ADVANCED BOUNDARY FLIP ENGINE: Splits, cleans, and locks format to "First Name Last Name"
 function formatDisplayName(rawName) {
     if (!rawName) return "-";
     
-    // 1. Scrub away any stray position letters or trailing spaces
-    let clean = rawName.replace(/^(GK|DF|MF|FW)\s+/i, '').trim();
+    // CRITICAL FIX: The \b marker stops it from accidentally eating letters inside names like AlFie or RaFik
+    let clean = rawName.replace(/\b(GK|DF|MF|FW)\b/gi, '').replace(/\s+/g, ' ').trim();
     
-    // 2. If the text contains a literal comma (e.g. "Mahrez, Riyad"), split and flip it instantly
+    // If the text contains a literal comma (e.g. "Mahrez, Riyad"), split and flip it instantly
     if (clean.includes(',')) {
         let parts = clean.split(',');
         let surname = parts[0].trim();
@@ -308,14 +308,16 @@ function formatDisplayName(rawName) {
         return `${toTitleCase(firstname)} ${toTitleCase(surname)}`;
     }
     
-    // 3. If there is no comma, but it's listed as "MAHREZ Riyad" (Surname First)
+    // If there is no comma, but it's listed as "MAHREZ Riyad" (Surname First)
     let tokens = clean.split(/\s+/);
     if (tokens.length >= 2) {
-        // Since the registry extracted Surnames first, we slide the first word to the very back
         let surname = tokens[0];
         let firstNames = tokens.slice(1).join(" ");
         return `${toTitleCase(firstNames)} ${toTitleCase(surname)}`;
     }
+    
+    return toTitleCase(clean);
+}
     
     return toTitleCase(clean);
 }
