@@ -293,30 +293,36 @@
             "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", metrics: [{ name: "Clearances_per90", target: 1.5, weight: 0.4 }, { name: "PassesAttempted_per90", target: 35.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 84.0, weight: 0.3 }] }
         };
 
-        // REVOLUTIONARY NAME PROCESSING ENGINE:
-// Strips structural prefixes, handles capitalization flips, and forms true First Name Surname strings
+        // ADVANCED FLIP ENGINE: Splits, cleans, and locks format to "First Name Last Name"
 function formatDisplayName(rawName) {
     if (!rawName) return "-";
     
-    // 1. Instantly scrub away any accidental position prefix blocks left by the PDF reader
+    // 1. Scrub away any stray position letters or trailing spaces
     let clean = rawName.replace(/^(GK|DF|MF|FW)\s+/i, '').trim();
     
-    let tokens = clean.split(/\s+/);
-    if (tokens.length < 2) return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
-    
-    // 2. Identify if the first block token is the strict capitalised Surname (e.g. "MAHREZ")
-    // If the first word is all uppercase and more than 1 character, it's the Last Name!
-    if (tokens[0] === tokens[0].toUpperCase() && tokens[0].length > 1) {
-        let surname = tokens[0].charAt(0).toUpperCase() + tokens[0].slice(1).toLowerCase();
-        
-        // Re-assemble the remaining tokens as the given First Names (formatted cleanly to Title Case)
-        let firstNames = tokens.slice(1).map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).join(" ");
-        
-        return `${firstNames} ${surname}`;
+    // 2. If the text contains a literal comma (e.g. "Mahrez, Riyad"), split and flip it instantly
+    if (clean.includes(',')) {
+        let parts = clean.split(',');
+        let surname = parts[0].trim();
+        let firstname = parts[1].trim();
+        return `${toTitleCase(firstname)} ${toTitleCase(surname)}`;
     }
     
-    // Fallback: If it's already mixed case, just pass it through as clean Title Case words
-    return tokens.map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).join(" ");
+    // 3. If there is no comma, but it's listed as "MAHREZ Riyad" (Surname First)
+    let tokens = clean.split(/\s+/);
+    if (tokens.length >= 2) {
+        // Since the registry extracted Surnames first, we slide the first word to the very back
+        let surname = tokens[0];
+        let firstNames = tokens.slice(1).join(" ");
+        return `${toTitleCase(firstNames)} ${toTitleCase(surname)}`;
+    }
+    
+    return toTitleCase(clean);
+}
+
+// Quick helper to make sure accents and capital letters look beautiful
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 }
 
         function patchMissingMetrics(player) {
