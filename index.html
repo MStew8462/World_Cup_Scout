@@ -407,12 +407,11 @@
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 runDataPipeline();
             } catch (error) {
-                console.log("Database load failed", error);
+                print("Database load failed", error);
             }
         }
 
-                // ADVANCED SCROLL SCANNED PARSE ENGINE
-                                        function parseCSVEngine(text) {
+        function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
             
@@ -434,32 +433,9 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // 1. UNIVERSAL POSITION-STRIPPING NAME FLIPPER
-                try {
-                    let rawPlayer = String(obj.Player || "").trim();
-                    
-                    // Instantly strip prefix tags (FW, MF, DF, GK) from the front
-                    let nameClean = rawPlayer.replace(/^(FW|MF|DF|GK)\s+/i, '').trim();
-                    
-                    let tokens = nameClean.split(/\s+/);
-                    if (tokens.length >= 2) {
-                        // The database stores Surname First (e.g., "Almada Thiago Ezequiel")
-                        // Isolate the first token as the surname
-                        let surname = tokens[0];
-                        // Take all remaining tokens as the given first names
-                        let firstNames = tokens.slice(1).join(" ");
-                        
-                        obj.CleanName = toTitleCase(firstNames) + " " + toTitleCase(surname);
-                    } else {
-                        obj.CleanName = toTitleCase(nameClean);
-                    }
-                } catch (e) {
-                    obj.CleanName = String(obj.Player || "Unknown Player");
-                }
-                
-                // 2. UNIVERSAL CLUB TITLE PERSISTENCE
-                // Reads the full club name columns exactly as they are written in the CSV
-                obj.Club = obj.Club ? String(obj.Club).trim() : "Unknown Club";
+                // Directly map native clean structural variables from the fixed CSV file
+                obj.CleanName = String(obj.Player || "").trim();
+                obj.Club = String(obj.Club || "International FA").trim();
                 
                 return obj;
             });
@@ -688,7 +664,7 @@
                 div.innerHTML = `
                     <div>
                         <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.CleanName} (${p.Position})</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — ${p.Nation || '-'}</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club} — ${p.Nation || '-'}</div>
                     </div>
                     <div style="font-weight:800; color:var(--emerald-green); font-size:14px;">${p.fitScore}% Match</div>
                 `;
@@ -706,7 +682,7 @@
                 div.innerHTML = `
                     <div>
                         <div style="font-weight:700; font-size:14px; color:white;">${p.CleanName} (${p.Position || '-'})</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — Nation: ${p.Nation || '-'} — Age: ${p.Age || '-'}</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club} — Nation: ${p.Nation || '-'} — Age: ${p.Age || '-'}</div>
                     </div>
                     <div style="font-weight:600; color:var(--neon-blue); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Best Suit: ${bestRole}</div>
                 `;
