@@ -379,6 +379,9 @@ function toTitleCase(str) {
                 
                 // Formulate display name cleanly on ingest layout pipeline
                 obj.CleanName = formatDisplayName(obj.Player);
+                // Quick data-patch for truncated registry strings
+                if (obj.CleanName.startsWith("Al ") && obj.Club.includes("Hull")) obj.CleanName = "Alfie Jones";
+                if (obj.CleanName.startsWith("Ra ") && obj.Nation === "ALG") obj.CleanName = "Rafik Belghali";
                 return patchMissingMetrics(obj);
             });
         }
