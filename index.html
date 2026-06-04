@@ -401,7 +401,6 @@
 
         async function loadTournamentDatabase() {
             try {
-                // The Date.now() suffix forces the browser to bypass any cache and fetch your true, clean CSV file
                 const response = await fetch('world_cup_2026_master.csv?t=' + Date.now());
                 if (!response.ok) throw new Error("File empty");
                 const csvText = await response.text();
@@ -434,9 +433,9 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // Directly use the pristine clean strings from your new CSV file
+                // Read clean parameters natively straight out of the spreadsheet layout columns
                 obj.CleanName = String(obj.Player || "").trim();
-                obj.Club = String(obj.Club || "Unknown Club").trim();
+                obj.Club = String(obj.Club || "International FA").trim();
                 
                 return obj;
             });
