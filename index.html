@@ -412,7 +412,7 @@
         }
 
                 // ADVANCED SCROLL SCANNED PARSE ENGINE
-                function parseCSVEngine(text) {
+                        function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
             
@@ -434,44 +434,37 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // 1. UNIVERSAL NAME CLEANING & FLIPPING ENGINE
-                let rawPlayer = String(obj.Player || "").trim();
-                
-                // Strip structural positional tags completely (Fw, Mf, Df, Gk) from the front
-                let nameClean = rawPlayer.replace(/^(FW|MF|DF|GK)\s+/i, '').trim();
-                
-                let tokens = nameClean.split(/\s+/);
-                if (tokens.length >= 2) {
-                    // Check if the first word is the capitalized Surname (e.g., "MANDI", "MAHREZ")
-                    if (tokens[0] === tokens[0].toUpperCase() && tokens[0].length > 1) {
-                        let surname = toTitleCase(tokens[0]);
-                        let firstNames = toTitleCase(tokens.slice(1).join(" "));
-                        obj.CleanName = `${firstNames} ${surname}`;
+                // 1. BULLETPROOF NAME PARSER
+                try {
+                    let rawPlayer = String(obj.Player || "").trim();
+                    
+                    // Drop positional initials completely (Fw, Mf, Df, Gk)
+                    let nameClean = rawPlayer.replace(/^(FW|MF|DF|GK)\s+/i, '').trim();
+                    let tokens = nameClean.split(/\s+/);
+                    
+                    if (tokens.length >= 2) {
+                        // The file has Surname first (e.g., "Mandi Aissa")
+                        // Take the last words as the first name, and the first word as the surname
+                        let surname = tokens[0];
+                        let firstNames = tokens.slice(1).join(" ");
+                        
+                        obj.CleanName = toTitleCase(firstNames) + " " + toTitleCase(surname);
                     } else {
-                        // If it's mixed, treat the first token as Surname and flip to back
-                        let surname = toTitleCase(tokens[0]);
-                        let firstNames = toTitleCase(tokens.slice(1).join(" "));
-                        obj.CleanName = `${firstNames} ${surname}`;
+                        obj.CleanName = toTitleCase(nameClean);
                     }
-                } else {
-                    obj.CleanName = toTitleCase(nameClean);
+                } catch (e) {
+                    obj.CleanName = String(obj.Player || "Unknown Player");
                 }
                 
-                // 2. UNIVERSAL CLUB FORMATTER
-                // Preserves the full club name string exactly as written
-                let rawClub = String(obj.Club || "").trim();
-                if (rawClub) {
-                    obj.Club = rawClub; 
-                } else {
-                    obj.Club = "Unknown Club";
-                }
+                // 2. BULLETPROOF CLUB NAMES
+                // Directly pass the full club string saved in the CSV natively
+                obj.Club = obj.Club ? String(obj.Club).trim() : "Unknown Club";
                 
-                // Data Recovery Manual Alignment Overrides
-                if (obj.CleanName.includes("Alfie") || obj.CleanName.includes("Jones") && String(obj.Club).includes("Hull")) {
-                    obj.CleanName = "Alfie Jones";
-                }
-                if (obj.CleanName.includes("Belghali")) {
-                    obj.CleanName = "Rafik Belghali";
+                // Final hardcoded manual alignment overrides
+                if (obj.CleanName.toUpperCase().includes("MAHREZ")) obj.CleanName = "Riyad Mahrez";
+                if (obj.CleanName.toUpperCase().includes("BELGHALI")) obj.CleanName = "Rafik Belghali";
+                if (obj.CleanName.toUpperCase().includes("ALFIE") || obj.CleanName.toUpperCase().includes("JONES")) {
+                    if (String(obj.Club).toUpperCase().includes("HULL")) obj.CleanName = "Alfie Jones";
                 }
                 
                 return obj;
