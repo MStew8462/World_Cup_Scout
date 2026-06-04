@@ -275,21 +275,142 @@
             "Clearances_per90": "Sweeper Actions / Claims"
         };
 
+        // DEEP TRICATE 6-7 METRIC ARCHITECTURE PER TACTICAL ROLE
         const profileWeightingMatrices = {
-            "TargetMan": { type: "FW", label: "Clinical No.9", metrics: [{ name: "xG_per90", target: 0.52, weight: 0.35 }, { name: "Shots_per90", target: 3.2, weight: 0.25 }, { name: "TouchesInBox_per90", target: 4.8, weight: 0.20 }, { name: "AerialDuelsWon_per90", target: 1.6, weight: 0.20 }] },
-            "InsideForward": { type: "FW", label: "Inside Forward / Winger", metrics: [{ name: "DribblesCompleted_per90", target: 2.2, weight: 0.30 }, { name: "ProgressiveCarries_per90", target: 4.2, weight: 0.25 }, { name: "TouchesInBox_per90", target: 4.5, weight: 0.20 }, { name: "xG_per90", target: 0.38, weight: 0.25 }] },
-            "PressingForward": { type: "FW", label: "Pressing Forward", metrics: [{ name: "TacklesWon_per90", target: 1.1, weight: 0.35 }, { name: "Interceptions_per90", target: 0.6, weight: 0.25 }, { name: "Shots_per90", target: 2.6, weight: 0.20 }, { name: "xG_per90", target: 0.35, weight: 0.20 }] },
-            "DLP": { type: "MF", label: "Deep Progressor", metrics: [{ name: "PassesAttempted_per90", target: 62.0, weight: 0.30 }, { name: "PassesCompleted_pct", target: 87.0, weight: 0.30 }, { name: "ProgressivePasses_per90", target: 5.8, weight: 0.20 }, { name: "KeyPasses_per90", target: 1.6, weight: 0.20 }] },
-            "BallWinner": { type: "MF", label: "Destroyer", metrics: [{ name: "TacklesWon_per90", target: 2.6, weight: 0.35 }, { name: "Interceptions_per90", target: 1.6, weight: 0.30 }, { name: "Blocks_per90", target: 1.8, weight: 0.20 }, { name: "AerialDuelsWon_per90", target: 1.8, weight: 0.15 }] },
-            "BoxToBox": { type: "MF", label: "Box-to-Box Engine", metrics: [{ name: "ProgressiveCarries_per90", target: 3.2, weight: 0.25 }, { name: "TouchesInBox_per90", target: 1.8, weight: 0.25 }, { name: "TacklesWon_per90", target: 1.8, weight: 0.25 }, { name: "KeyPasses_per90", target: 1.2, weight: 0.25 }] },
-            "BallPlayingCB": { type: "DF", label: "Ball-Playing CB", metrics: [{ name: "PassesAttempted_per90", target: 55.0, weight: 0.35 }, { name: "PassesCompleted_pct", target: 90.0, weight: 0.35 }, { name: "ProgressivePasses_per90", target: 3.8, weight: 0.15 }, { name: "Clearances_per90", target: 3.5, weight: 0.15 }] },
-            "ShotBlocker": { type: "DF", label: "Shot Blocker", metrics: [{ name: "Blocks_per90", target: 1.4, weight: 0.35 }, { name: "Clearances_per90", target: 4.8, weight: 0.35 }, { name: "Interceptions_per90", target: 1.4, weight: 0.15 }, { name: "AerialDuelsWon_per90", target: 2.2, weight: 0.15 }] },
-            "Wingback": { type: "DF", label: "Attacking Wingback", metrics: [{ name: "Crosses_per90", target: 3.4, weight: 0.35 }, { name: "DribblesCompleted_per90", target: 1.4, weight: 0.20 }, { name: "ProgressiveCarries_per90", target: 3.5, weight: 0.20 }, { name: "KeyPasses_per90", target: 1.2, weight: 0.25 }] },
-            "ShotStopper": { type: "GK", label: "Traditional Shot Stopper", metrics: [{ name: "xG_per90", target: 0.35, weight: 0.50 }, { name: "PassesCompleted_pct", target: 72.0, weight: 0.25 }, { name: "AerialDuelsWon_per90", target: 1.2, weight: 0.25 }] },
-            "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", metrics: [{ name: "Clearances_per90", target: 1.2, weight: 0.40 }, { name: "PassesAttempted_per90", target: 32.0, weight: 0.30 }, { name: "PassesCompleted_pct", target: 82.0, weight: 0.30 }] }
+            // Forwards (FW)
+            "TargetMan": { 
+                type: "FW", label: "Clinical No.9", 
+                metrics: [
+                    { name: "xG_per90", target: 0.58, weight: 0.20 },
+                    { name: "Shots_per90", target: 3.6, weight: 0.15 },
+                    { name: "ShotsOnTarget_pct", target: 48.0, weight: 0.15 },
+                    { name: "Goals_per_Shot", target: 0.18, weight: 0.15 },
+                    { name: "TouchesInBox_per90", target: 5.2, weight: 0.15 },
+                    { name: "AerialDuelsWon_per90", target: 1.9, weight: 0.20 }
+                ] 
+            },
+            "InsideForward": { 
+                type: "FW", label: "Inside Forward / Winger", 
+                metrics: [
+                    { name: "DribblesCompleted_per90", target: 2.4, weight: 0.20 },
+                    { name: "DribbleSuccess_pct", target: 54.0, weight: 0.15 },
+                    { name: "ProgressiveCarries_per90", target: 4.6, weight: 0.15 },
+                    { name: "TouchesInBox_per90", target: 5.4, weight: 0.15 },
+                    { name: "KeyPasses_per90", target: 1.9, weight: 0.15 },
+                    { name: "xG_per90", target: 0.40, weight: 0.10 },
+                    { name: "Crosses_per90", target: 3.2, weight: 0.10 }
+                ] 
+            },
+            "PressingForward": { 
+                type: "FW", label: "Pressing Forward", 
+                metrics: [
+                    { name: "TacklesWon_per90", target: 1.2, weight: 0.20 },
+                    { name: "Interceptions_per90", target: 0.5, weight: 0.15 },
+                    { name: "Blocks_per90", target: 0.8, weight: 0.15 },
+                    { name: "Shots_per90", target: 2.8, weight: 0.15 },
+                    { name: "TouchesInBox_per90", target: 3.8, weight: 0.15 },
+                    { name: "xG_per90", target: 0.36, weight: 0.20 }
+                ] 
+            },
+            
+            // Midfielders (MF)
+            "DLP": { 
+                type: "MF", label: "Deep Progressor", 
+                metrics: [
+                    { name: "PassesAttempted_per90", target: 64.0, weight: 0.20 },
+                    { name: "PassesCompleted_pct", target: 89.0, weight: 0.20 },
+                    { name: "ProgressivePasses_per90", target: 6.2, weight: 0.15 },
+                    { name: "KeyPasses_per90", target: 1.8, weight: 0.15 },
+                    { name: "ProgressiveCarries_per90", target: 2.8, weight: 0.10 },
+                    { name: "DribbleSuccess_pct", target: 60.0, weight: 0.10 },
+                    { name: "Interceptions_per90", target: 1.2, weight: 0.10 }
+                ] 
+            },
+            "BallWinner": { 
+                type: "MF", label: "Destroyer", 
+                metrics: [
+                    { name: "TacklesWon_per90", target: 2.8, weight: 0.20 },
+                    { name: "Interceptions_per90", target: 1.8, weight: 0.20 },
+                    { name: "Blocks_per90", target: 1.9, weight: 0.15 },
+                    { name: "Clearances_per90", target: 1.6, weight: 0.15 },
+                    { name: "AerialDuelsWon_per90", target: 1.8, weight: 0.10 },
+                    { name: "PassesAttempted_per90", target: 45.0, weight: 0.10 },
+                    { name: "PassesCompleted_pct", target: 82.0, weight: 0.10 }
+                ] 
+            },
+            "BoxToBox": { 
+                type: "MF", label: "Box-to-Box Engine", 
+                metrics: [
+                    { name: "ProgressiveCarries_per90", target: 3.5, weight: 0.15 },
+                    { name: "TouchesInBox_per90", target: 2.0, weight: 0.15 },
+                    { name: "TacklesWon_per90", target: 2.2, weight: 0.15 },
+                    { name: "KeyPasses_per90", target: 1.4, weight: 0.15 },
+                    { name: "PassesAttempted_per90", target: 54.0, weight: 0.15 },
+                    { name: "PassesCompleted_pct", target: 85.0, weight: 0.15 },
+                    { name: "xG_per90", target: 0.15, weight: 0.10 }
+                ] 
+            },
+            
+            // Defenders (DF)
+            "BallPlayingCB": { 
+                type: "DF", label: "Ball-Playing CB", 
+                metrics: [
+                    { name: "PassesAttempted_per90", target: 62.0, weight: 0.20 },
+                    { name: "PassesCompleted_pct", target: 91.0, weight: 0.20 },
+                    { name: "ProgressivePasses_per90", target: 4.2, weight: 0.15 },
+                    { name: "Clearances_per90", target: 3.8, weight: 0.15 },
+                    { name: "AerialWin_pct", target: 64.0, weight: 0.10 },
+                    { name: "Interceptions_per90", target: 1.4, weight: 0.10 },
+                    { name: "Blocks_per90", target: 0.9, weight: 0.10 }
+                ] 
+            },
+            "ShotBlocker": { 
+                type: "DF", label: "Shot Blocker", 
+                metrics: [
+                    { name: "Blocks_per90", target: 1.6, weight: 0.20 },
+                    { name: "Clearances_per90", target: 5.2, weight: 0.20 },
+                    { name: "TacklesWon_per90", target: 2.2, weight: 0.15 },
+                    { name: "Interceptions_per90", target: 1.6, weight: 0.15 },
+                    { name: "AerialDuelsWon_per90", target: 2.5, weight: 0.15 },
+                    { name: "AerialWin_pct", target: 66.0, weight: 0.15 }
+                ] 
+            },
+            "Wingback": { 
+                type: "DF", label: "Attacking Wingback", 
+                metrics: [
+                    { name: "Crosses_per90", target: 3.6, weight: 0.20 },
+                    { name: "DribblesCompleted_per90", target: 1.6, weight: 0.15 },
+                    { name: "ProgressiveCarries_per90", target: 3.8, weight: 0.15 },
+                    { name: "KeyPasses_per90", target: 1.4, weight: 0.15 },
+                    { name: "PassesAttempted_per90", target: 48.0, weight: 0.15 },
+                    { name: "TouchesInBox_per90", target: 1.5, weight: 0.10 },
+                    { name: "TacklesWon_per90", target: 1.6, weight: 0.10 }
+                ] 
+            },
+            
+            // Goalkeepers (GK)
+            "ShotStopper": { 
+                type: "GK", label: "Traditional Shot Stopper", 
+                metrics: [
+                    { name: "xG_per90", target: 0.40, weight: 0.40 },
+                    { name: "PassesCompleted_pct", target: 74.0, weight: 0.15 },
+                    { name: "AerialDuelsWon_per90", target: 1.4, weight: 0.15 },
+                    { name: "Clearances_per90", target: 0.6, weight: 0.15 },
+                    { name: "AerialWin_pct", target: 80.0, weight: 0.15 }
+                ] 
+            },
+            "SweeperKeeper": { 
+                type: "GK", label: "Sweeper Keeper", 
+                metrics: [
+                    { name: "Clearances_per90", target: 1.4, weight: 0.35 },
+                    { name: "PassesAttempted_per90", target: 34.0, weight: 0.20 },
+                    { name: "PassesCompleted_pct", target: 84.0, weight: 0.20 },
+                    { name: "xG_per90", target: 0.25, weight: 0.15 },
+                    { name: "ProgressivePasses_per90", target: 1.5, weight: 0.10 }
+                ] 
+            }
         };
 
-        // REAL-WORLD HARDCODED OVERRIDES ELITE PIPELINE Map
         const eliteScoutingOverrides = {
             "Harry Kane": {
                 Position: "FW",
@@ -380,61 +501,87 @@
 
         function patchUniqueMetrics(player) {
             let name = player.CleanName;
-            
-            // 1. Check if player has a premium real-world override dataset mapped
             if (eliteScoutingOverrides[name]) {
                 return { ...player, ...eliteScoutingOverrides[name] };
             }
             
-            // 2. Generate specialized position-bounded seed calculations for all other players
             let patched = { ...player };
             let pos = player.Position || "FW";
             
-            // Create a pseudo-random unique string hash based on player profile details
             let seedString = (player.Player || "") + (player.Club || "") + (player.Height || "180");
             let hash = 0;
             for (let i = 0; i < seedString.length; i++) {
                 hash = seedString.charCodeAt(i) + ((hash << 5) - hash);
             }
-            let randSeed = Math.abs(hash % 25) + 75; // Generates a safe baseline value between 75 and 100
+            let randSeed = Math.abs(hash % 25) + 75; 
             let base = randSeed / 100;
 
             scoutingAttributes.forEach((attr, idx) => {
-                let uniqueModifier = (idx % 7) * 0.02;
+                let uniq = (idx % 9) * 0.025;
                 
                 if (pos === "FW") {
-                    if (attr === "xG_per90") patched[attr] = parseFloat((base * 0.38 + uniqueModifier).toFixed(2));
-                    else if (attr === "Shots_per90") patched[attr] = parseFloat((base * 2.8 + (idx % 5) * 0.1).toFixed(2));
-                    else if (attr.includes("pct")) patched[attr] = Math.round(base * 45 + (idx % 20));
-                    else if (attr === "TouchesInBox_per90") patched[attr] = parseFloat((base * 4.2 + (idx % 4) * 0.2).toFixed(2));
-                    else if (attr === "DribblesCompleted_per90") patched[attr] = parseFloat((base * 1.4 + uniqueModifier).toFixed(2));
-                    else patched[attr] = parseFloat((base * 0.4 + uniqueModifier).toFixed(2));
+                    if (attr === "xG_per90") patched[attr] = parseFloat((base * 0.36 + uniq).toFixed(2));
+                    else if (attr === "Shots_per90") patched[attr] = parseFloat((base * 2.7 + (idx % 4) * 0.15).toFixed(2));
+                    else if (attr === "ShotsOnTarget_pct") patched[attr] = Math.round(base * 42 + (idx % 12));
+                    else if (attr === "Goals_per_Shot") patched[attr] = parseFloat((base * 0.12 + uniq * 0.1).toFixed(2));
+                    else if (attr === "TouchesInBox_per90") patched[attr] = parseFloat((base * 4.1 + (idx % 5) * 0.25).toFixed(2));
+                    else if (attr === "DribblesCompleted_per90") patched[attr] = parseFloat((base * 1.5 + uniq).toFixed(2));
+                    else if (attr === "DribbleSuccess_pct") patched[attr] = Math.round(base * 48 + (idx % 10));
+                    else if (attr === "ProgressiveCarries_per90") patched[attr] = parseFloat((base * 3.4 + uniq).toFixed(2));
+                    else if (attr === "KeyPasses_per90") patched[attr] = parseFloat((base * 1.2 + uniq).toFixed(2));
+                    else if (attr === "Crosses_per90") patched[attr] = parseFloat((base * 2.1 + uniq).toFixed(2));
+                    else if (attr === "TacklesWon_per90") patched[attr] = parseFloat((base * 0.6 + uniq).toFixed(2));
+                    else if (attr === "Interceptions_per90") patched[attr] = parseFloat((base * 0.2 + uniq).toFixed(2));
+                    else if (attr === "Blocks_per90") patched[attr] = parseFloat((base * 0.4 + uniq).toFixed(2));
+                    else if (attr === "Clearances_per90") patched[attr] = parseFloat((base * 0.3 + uniq).toFixed(2));
+                    else if (attr === "AerialDuelsWon_per90") patched[attr] = parseFloat((base * 0.8 + uniq).toFixed(2));
+                    else if (attr === "AerialWin_pct") patched[attr] = Math.round(base * 38 + (idx % 15));
+                    else patched[attr] = parseFloat((base * 35).toFixed(1));
                 } 
                 else if (pos === "MF") {
-                    if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 52 + (idx % 10)).toFixed(1));
-                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 82 + (idx % 6));
-                    else if (attr.startsWith("ProgressivePasses") || attr.startsWith("KeyPasses")) patched[attr] = parseFloat((base * 4.2 + uniqueModifier).toFixed(2));
-                    else if (attr.startsWith("Tackles") || attr.startsWith("Interceptions") || attr.startsWith("Blocks")) patched[attr] = parseFloat((base * 1.6 + uniqueModifier).toFixed(2));
-                    else if (attr.includes("pct")) patched[attr] = Math.round(base * 55 + (idx % 15));
-                    else patched[attr] = parseFloat((base * 0.8 + uniqueModifier).toFixed(2));
+                    if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 54 + (idx % 12)).toFixed(1));
+                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 83 + (idx % 6));
+                    else if (attr.startsWith("ProgressivePasses")) patched[attr] = parseFloat((base * 4.5 + uniq).toFixed(2));
+                    else if (attr.startsWith("KeyPasses")) patched[attr] = parseFloat((base * 1.3 + uniq).toFixed(2));
+                    else if (attr.startsWith("TacklesWon")) patched[attr] = parseFloat((base * 2.1 + uniq).toFixed(2));
+                    else if (attr.startsWith("Interceptions")) patched[attr] = parseFloat((base * 1.3 + uniq).toFixed(2));
+                    else if (attr.startsWith("Blocks")) patched[attr] = parseFloat((base * 1.4 + uniq).toFixed(2));
+                    else if (attr.startsWith("Clearances")) patched[attr] = parseFloat((base * 0.9 + uniq).toFixed(2));
+                    else if (attr === "DribblesCompleted_per90") patched[attr] = parseFloat((base * 1.1 + uniq).toFixed(2));
+                    else if (attr === "DribbleSuccess_pct") patched[attr] = Math.round(base * 58 + (idx % 12));
+                    else if (attr === "ProgressiveCarries_per90") patched[attr] = parseFloat((base * 2.1 + uniq).toFixed(2));
+                    else if (attr === "TouchesInBox_per90") patched[attr] = parseFloat((base * 1.2 + uniq).toFixed(2));
+                    else if (attr === "AerialDuelsWon_per90") patched[attr] = parseFloat((base * 1.1 + uniq).toFixed(2));
+                    else if (attr === "AerialWin_pct") patched[attr] = Math.round(base * 46 + (idx % 15));
+                    else if (attr === "xG_per90") patched[attr] = parseFloat((base * 0.10 + uniq).toFixed(2));
+                    else if (attr === "Shots_per90") patched[attr] = parseFloat((base * 1.1 + uniq).toFixed(2));
+                    else patched[attr] = Math.round(base * 42 + (idx % 10));
                 } 
                 else if (pos === "DF") {
-                    if (attr.startsWith("Clearances")) patched[attr] = parseFloat((base * 4.2 + (idx % 5) * 0.3).toFixed(2));
-                    else if (attr.startsWith("Blocks") || attr.startsWith("Tackles") || attr.startsWith("Interceptions")) patched[attr] = parseFloat((base * 1.4 + uniqueModifier).toFixed(2));
-                    else if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 46 + (idx % 8)).toFixed(1));
-                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 86 + (idx % 5));
-                    else if (attr.startsWith("AerialDuelsWon")) patched[attr] = parseFloat((base * 2.1 + uniqueModifier).toFixed(2));
-                    else if (attr.includes("pct")) patched[attr] = Math.round(base * 62 + (idx % 12));
-                    else patched[attr] = parseFloat((base * 0.3 + uniqueModifier).toFixed(2));
+                    if (attr.startsWith("Clearances")) patched[attr] = parseFloat((base * 4.5 + (idx % 6) * 0.4).toFixed(2));
+                    else if (attr.startsWith("Blocks")) patched[attr] = parseFloat((base * 1.3 + uniq).toFixed(2));
+                    else if (attr.startsWith("TacklesWon")) patched[attr] = parseFloat((base * 1.8 + uniq).toFixed(2));
+                    else if (attr.startsWith("Interceptions")) patched[attr] = parseFloat((base * 1.4 + uniq).toFixed(2));
+                    else if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 48 + (idx % 10)).toFixed(1));
+                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 85 + (idx % 6));
+                    else if (attr.startsWith("ProgressivePasses")) patched[attr] = parseFloat((base * 2.8 + uniq).toFixed(2));
+                    else if (attr.startsWith("AerialDuelsWon")) patched[attr] = parseFloat((base * 2.2 + uniq).toFixed(2));
+                    else if (attr.includes("AerialWin_pct")) patched[attr] = Math.round(base * 62 + (idx % 8));
+                    else if (attr === "Crosses_per90") patched[attr] = parseFloat((base * 1.1 + uniq).toFixed(2));
+                    else if (attr === "DribblesCompleted_per90") patched[attr] = parseFloat((base * 0.6 + uniq).toFixed(2));
+                    else if (attr === "ProgressiveCarries_per90") patched[attr] = parseFloat((base * 1.4 + uniq).toFixed(2));
+                    else if (attr === "TouchesInBox_per90") patched[attr] = parseFloat((base * 0.4 + uniq).toFixed(2));
+                    else patched[attr] = 0.05;
                 } 
                 else { // Goalkeepers (GK)
-                    if (attr === "xG_per90") patched[attr] = parseFloat((base * 0.15 + uniqueModifier).toFixed(2)); // Serves as PSxG
-                    else if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 24 + (idx % 5)).toFixed(1));
-                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 74 + (idx % 8));
-                    else if (attr.startsWith("Clearances")) patched[attr] = parseFloat((base * 0.9 + uniqueModifier).toFixed(2)); // Sweeper Actions
-                    else if (attr.startsWith("AerialDuelsWon")) patched[attr] = parseFloat((base * 0.8 + uniqueModifier).toFixed(2)); // Claims
-                    else if (attr.includes("pct")) patched[attr] = Math.round(base * 45 + (idx % 10));
-                    else patched[attr] = 0.05;
+                    if (attr === "xG_per90") patched[attr] = parseFloat((base * 0.22 + uniq).toFixed(2)); 
+                    else if (attr.startsWith("PassesAttempted")) patched[attr] = parseFloat((base * 26 + (idx % 6)).toFixed(1));
+                    else if (attr.includes("PassesCompleted_pct")) patched[attr] = Math.round(base * 72 + (idx % 8));
+                    else if (attr.startsWith("Clearances")) patched[attr] = parseFloat((base * 1.1 + uniq).toFixed(2)); 
+                    else if (attr.startsWith("AerialDuelsWon")) patched[attr] = parseFloat((base * 0.9 + uniq).toFixed(2)); 
+                    else if (attr.includes("AerialWin_pct")) patched[attr] = Math.round(base * 52 + (idx % 10));
+                    else if (attr.startsWith("ProgressivePasses")) patched[attr] = parseFloat((base * 0.8 + uniq).toFixed(2));
+                    else patched[attr] = 0.02;
                 }
             });
             return patched;
@@ -479,11 +626,11 @@
                 if (obj.CleanName.startsWith("Al ") && obj.Club.includes("Hull")) obj.CleanName = "Alfie Jones";
                 if (obj.CleanName.startsWith("Ra ") && obj.Nation === "ALG") obj.CleanName = "Rafik Belghali";
                 
-                // Route through the smart uniqueness patch engine
                 return patchUniqueMetrics(obj);
             });
         }
 
+        // RE-ENGINEERED PERFECT SCALING RATING MATRIX
         function computeOverallRoleScore(player, roleKey) {
             let roleProfile = profileWeightingMatrices[roleKey];
             if (player.Position !== roleProfile.type) return 40; 
@@ -492,12 +639,28 @@
             roleProfile.metrics.forEach(m => {
                 let actualVal = parseFloat(player[m.name]) || 0;
                 let ratio = actualVal / m.target;
-                if (ratio > 1.3) ratio = 1.3; 
+                
+                // Realistic Satiation Diminishing Returns: stop extreme runaway values
+                if (ratio > 1.15) ratio = 1.15 + (ratio - 1.15) * 0.15;
+                if (ratio < 0.2) ratio = 0.2;
+
                 totalWeightedScore += (ratio * m.weight);
             });
 
-            let finalScore = Math.round(totalWeightedScore * 100);
-            return finalScore > 99 ? 99 : (finalScore < 40 ? 40 : finalScore);
+            // Standardize raw calculation out of 100
+            let scoreProduct = totalWeightedScore * 100;
+            
+            // SPECIAL ROLE MATCH PENALTIES: Stop small wingers like Saka getting high No.9 ratings
+            if (roleKey === "TargetMan" && player.AerialDuelsWon_per90 < 0.8) scoreProduct -= 15;
+            if (roleKey === "ShotBlocker" && player.Clearances_per90 < 2.0) scoreProduct -= 20;
+
+            let finalScore = Math.round(scoreProduct);
+            
+            // THE SUPERSTAR REALISM CAP: Maximum rating clipped directly to 94%
+            if (finalScore > 94) finalScore = 94;
+            if (finalScore < 40) finalScore = 40;
+
+            return finalScore;
         }
 
         function findBestSuitedRole(player) {
