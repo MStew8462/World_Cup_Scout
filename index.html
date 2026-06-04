@@ -32,7 +32,6 @@
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
         h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 20px 0 10px 0; letter-spacing: 0.5px;}
 
-        /* Premium Filter Suite */
         .filter-wrapper {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 10px; padding: 12px; margin-bottom: 16px;
@@ -49,7 +48,6 @@
             padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none;
         }
 
-        /* Profile Deck Wrappers */
         .single-profile-wrapper { width: 100%; margin-bottom: 16px; }
         .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .scout-card {
@@ -68,7 +66,6 @@
         }
         .bio-strip span strong { color: white; font-weight: 600; }
 
-        /* Performance Attribute Rows */
         .matrix-row-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 6px; padding: 8px 12px; margin-bottom: 5px;
@@ -89,7 +86,6 @@
         .tier-good { background: rgba(0,210,255,0.1); color: var(--neon-blue); border: 1px solid rgba(0,210,255,0.25); }
         .tier-avg { background: rgba(255,184,0,0.1); color: var(--amber-gold); border: 1px solid rgba(255,184,0,0.25); }
 
-        /* 4-Tab Navigation Grid styling */
         .tab-bar { display: flex; gap: 12px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
         .tab-bar::-webkit-scrollbar { display: none; }
         .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; padding: 8px 4px; cursor: pointer; flex-shrink: 0; }
@@ -109,14 +105,29 @@
     <div class="subtitle">FBref Real-World Tournament Matrix</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament database... (e.g. Mbappe, Mainoo, Messi)">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament database... (e.g. Mbappe, Bellingham, Messi)">
         <div class="filter-grid">
             <div>
                 <select id="roleSelector">
-                    <option value="TargetMan">Profile: Clinical No.9 (FW)</option>
-                    <option value="InsideForward">Profile: Inside Forward (FW)</option>
-                    <option value="DLP">Profile: Deep-Lying Progressor (MF)</option>
-                    <option value="BallWinner">Profile: Defensive Destroyer (MF)</option>
+                    <optgroup label="Forwards (FW)">
+                        <option value="TargetMan">Clinical No.9</option>
+                        <option value="InsideForward">Inside Forward / Winger</option>
+                        <option value="PressingForward">Pressing Forward</option>
+                    </optgroup>
+                    <optgroup label="Midfielders (MF)">
+                        <option value="DLP">Deep-Lying Progressor</option>
+                        <option value="BallWinner">Defensive Destroyer</option>
+                        <option value="BoxToBox">Box-to-Box Engine</option>
+                    </optgroup>
+                    <optgroup label="Defenders (DF)">
+                        <option value="BallPlayingCB">Modern Ball-Playing CB</option>
+                        <option value="ShotBlocker">The Shot Blocker (Stopper)</option>
+                        <option value="Wingback">Attacking Wingback</option>
+                    </optgroup>
+                    <optgroup label="Goalkeepers (GK)">
+                        <option value="ShotStopper">Traditional Shot Stopper</option>
+                        <option value="SweeperKeeper">Sweeper Keeper</option>
+                    </optgroup>
                 </select>
             </div>
             <div>
@@ -252,12 +263,50 @@
             "AerialDuelsWon_per90", "AerialWin_pct"
         ];
 
-        const profileWeightingMatrices = {
-            "TargetMan": { type: "FW", metrics: [{ name: "xG_per90", target: 0.60, weight: 0.3 }, { name: "Shots_per90", target: 3.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.5, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.3 }] },
-            "InsideForward": { type: "FW", metrics: [{ name: "DribblesCompleted_per90", target: 2.5, weight: 0.3 }, { name: "ProgressiveCarries_per90", target: 4.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.0, weight: 0.2 }, { name: "xG_per90", target: 0.45, weight: 0.3 }] },
-            "DLP": { type: "MF", metrics: [{ name: "PassesAttempted_per90", target: 65.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 88.0, weight: 0.3 }, { name: "ProgressivePasses_per90", target: 6.5, weight: 0.2 }, { name: "KeyPasses_per90", target: 1.8, weight: 0.2 }] },
-            "BallWinner": { type: "MF", metrics: [{ name: "TacklesWon_per90", target: 2.8, weight: 0.3 }, { name: "Interceptions_per90", target: 1.8, weight: 0.3 }, { name: "Blocks_per90", target: 2.0, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.2 }] }
+        // Custom label translation maps specifically for GK profile displays
+        const gkLabelOverrides = {
+            "xG_per90": "PSxG+/- (Shot Stopping Margin)",
+            "PassesAttempted_per90": "Launched Distribution Rate",
+            "PassesCompleted_pct": "Distribution Completion %",
+            "Crosses_per90": "Crosses Claimed / Intercepted",
+            "Clearances_per90": "Sweeper Actions / Claims"
         };
+
+        const profileWeightingMatrices = {
+            // Forwards (FW)
+            "TargetMan": { type: "FW", label: "Clinical No.9", metrics: [{ name: "xG_per90", target: 0.60, weight: 0.3 }, { name: "Shots_per90", target: 3.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.5, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.3 }] },
+            "InsideForward": { type: "FW", label: "Inside Forward", metrics: [{ name: "DribblesCompleted_per90", target: 2.5, weight: 0.3 }, { name: "ProgressiveCarries_per90", target: 4.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.0, weight: 0.2 }, { name: "xG_per90", target: 0.45, weight: 0.3 }] },
+            "PressingForward": { type: "FW", label: "Pressing Forward", metrics: [{ name: "TacklesWon_per90", target: 1.2, weight: 0.3 }, { name: "Interceptions_per90", target: 0.8, weight: 0.2 }, { name: "Shots_per90", target: 2.8, weight: 0.2 }, { name: "xG_per90", target: 0.42, weight: 0.3 }] },
+            
+            // Midfielders (MF)
+            "DLP": { type: "MF", label: "Deep Progressor", metrics: [{ name: "PassesAttempted_per90", target: 65.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 88.0, weight: 0.3 }, { name: "ProgressivePasses_per90", target: 6.5, weight: 0.2 }, { name: "KeyPasses_per90", target: 1.8, weight: 0.2 }] },
+            "BallWinner": { type: "MF", label: "Destroyer", metrics: [{ name: "TacklesWon_per90", target: 2.8, weight: 0.3 }, { name: "Interceptions_per90", target: 1.8, weight: 0.3 }, { name: "Blocks_per90", target: 2.0, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.2 }] },
+            "BoxToBox": { type: "MF", label: "Box-to-Box Engine", metrics: [{ name: "ProgressiveCarries_per90", target: 3.5, weight: 0.25 }, { name: "TouchesInBox_per90", target: 2.2, weight: 0.25 }, { name: "TacklesWon_per90", target: 2.0, weight: 0.25 }, { name: "KeyPasses_per90", target: 1.4, weight: 0.25 }] },
+            
+            // Defenders (DF)
+            "BallPlayingCB": { type: "DF", label: "Ball-Playing CB", metrics: [{ name: "PassesAttempted_per90", target: 58.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 91.0, weight: 0.3 }, { name: "ProgressivePasses_per90", target: 4.2, weight: 0.2 }, { name: "Clearances_per90", target: 4.0, weight: 0.2 }] },
+            "ShotBlocker": { type: "DF", label: "Shot Blocker", metrics: [{ name: "Blocks_per90", target: 1.8, weight: 0.3 }, { name: "Clearances_per90", target: 5.5, weight: 0.3 }, { name: "Interceptions_per90", target: 1.6, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.5, weight: 0.2 }] },
+            "Wingback": { type: "DF", label: "Attacking Wingback", metrics: [{ name: "Crosses_per90", target: 3.8, weight: 0.3 }, { name: "DribblesCompleted_per90", target: 1.8, weight: 0.2 }, { name: "ProgressiveCarries_per90", target: 4.0, weight: 0.2 }, { name: "KeyPasses_per90", target: 1.5, weight: 0.3 }] },
+            
+            // Goalkeepers (GK)
+            "ShotStopper": { type: "GK", label: "Traditional Shot Stopper", metrics: [{ name: "xG_per90", target: 0.45, weight: 0.5 }, { name: "PassesCompleted_pct", target: 75.0, weight: 0.25 }, { name: "AerialDuelsWon_per90", target: 1.5, weight: 0.25 }] },
+            "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", metrics: [{ name: "Clearances_per90", target: 1.5, weight: 0.4 }, { name: "PassesAttempted_per90", target: 35.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 84.0, weight: 0.3 }] }
+        };
+
+        // HELPER FUNCTION: Transposes names cleanly to First Name Surname format
+        function formatDisplayName(rawName) {
+            if (!rawName) return "-";
+            let tokens = rawName.trim().split(/\s+/);
+            if (tokens.length < 2) return rawName;
+            
+            // If PDF output clumped multiple uppercase surnames at the front, handle gracefully
+            if (tokens[0] === tokens[0].toUpperCase() && tokens.length > 1) {
+                let surname = tokens[0];
+                let firstname = tokens.slice(1).join(" ");
+                return `${firstname} ${surname}`;
+            }
+            return rawName; 
+        }
 
         function patchMissingMetrics(player) {
             let patched = { ...player };
@@ -284,21 +333,17 @@
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 runDataPipeline();
             } catch (error) {
-                console.log("CSV load failed, using local context fallback", error);
-                generateDatabaseFromRosterContext();
+                console.log("Database fetch failed, loading recovery mode", error);
             }
         }
 
-        // FIXED ENGINE: Automatically un-quotes fields so Quote_All CSV data strings parse into true variables
         function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
             
-            // Clean quote marks out of headers line array
             const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
             
             return lines.slice(1).map(line => {
-                // Split headers safely while managing enclosed comma strings
                 let fields = [];
                 let match;
                 let regex = /"([^"]*)"|([^,]+)/g;
@@ -311,47 +356,13 @@
                 headers.forEach((h, idx) => { 
                     let val = fields[idx];
                     if (val === undefined) val = "";
-                    // Un-quote strings and translate numeric elements natively
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
+                
+                // Formulate display name cleanly on ingest layout pipeline
+                obj.CleanName = formatDisplayName(obj.Player);
                 return patchMissingMetrics(obj);
             });
-        }
-
-        function generateDatabaseFromRosterContext() {
-            const rawRoster = [
-                { Player: "Rayan Aït-Nouri", Nation: "ALG", Position: "DF", Age: 25, Height: 180, Club: "Manchester City FC" },
-                { Player: "Houssem Aouar", Nation: "ALG", Position: "MF", Age: 27, Height: 175, Club: "Al Ittihad" },
-                { Player: "Ibrahim Maza", Nation: "ALG", Position: "MF", Age: 20, Height: 180, Club: "Bayer Leverkusen" },
-                { Player: "Lisandro Martinez", Nation: "ARG", Position: "DF", Age: 28, Height: 175, Club: "Manchester United FC" },
-                { Player: "Lionel Messi", Nation: "ARG", Position: "FW", Age: 38, Height: 170, Club: "Inter Miami CF" },
-                { Player: "Julian Alvarez", Nation: "ARG", Position: "FW", Age: 26, Height: 170, Club: "Atlético De Madrid" },
-                { Player: "Enzo Fernandez", Nation: "ARG", Position: "MF", Age: 25, Height: 178, Club: "Chelsea FC" },
-                { Player: "Alexis Mac Allister", Nation: "ARG", Position: "MF", Age: 27, Height: 176, Club: "Liverpool FC" },
-                { Player: "Harry Kane", Nation: "ENG", Position: "FW", Age: 32, Height: 190, Club: "FC Bayern München" },
-                { Player: "Jude Bellingham", Nation: "ENG", Position: "MF", Age: 22, Height: 183, Club: "Real Madrid C. F." },
-                { Player: "Bukayo Saka", Nation: "ENG", Position: "FW", Age: 24, Height: 178, Club: "Arsenal FC" },
-                { Player: "Kobbie Mainoo", Nation: "ENG", Position: "MF", Age: 21, Height: 183, Club: "Manchester United FC" },
-                { Player: "Declan Rice", Nation: "ENG", Position: "MF", Age: 27, Height: 185, Club: "Arsenal FC" },
-                { Player: "Kylian Mbappe", Nation: "FRA", Position: "FW", Age: 27, Height: 180, Club: "Real Madrid C. F." },
-                { Player: "William Saliba", Nation: "FRA", Position: "DF", Age: 25, Height: 192, Club: "Arsenal FC" },
-                { Player: "Michael Olise", Nation: "FRA", Position: "FW", Age: 24, Height: 184, Club: "FC Bayern München" },
-                { Player: "Florian Wirtz", Nation: "GER", Position: "MF", Age: 23, Height: 176, Club: "Liverpool FC" },
-                { Player: "Jamal Musiala", Nation: "GER", Position: "MF", Age: 23, Height: 180, Club: "FC Bayern München" },
-                { Player: "Kai Havertz", Nation: "GER", Position: "FW", Age: 26, Height: 190, Club: "Arsenal FC" },
-                { Player: "Vinicius Junior", Nation: "BRA", Position: "FW", Age: 25, Height: 176, Club: "Real Madrid C. F." },
-                { Player: "Amad Diallo", Nation: "CIV", Position: "FW", Age: 23, Height: 173, Club: "Manchester United FC" },
-                { Player: "Kevin De Bruyne", Nation: "BEL", Position: "MF", Age: 34, Height: 181, Club: "SSC Napoli" },
-                { Player: "Romelu Lukaku", Nation: "BEL", Position: "FW", Age: 33, Height: 190, Club: "SSC Napoli" },
-                { Player: "Erling Haaland", Nation: "NOR", Position: "FW", Age: 25, Height: 195, Club: "Manchester City FC" },
-                { Player: "Martin Odegaard", Nation: "NOR", Position: "MF", Age: 27, Height: 178, Club: "Arsenal FC" },
-                { Player: "Viktor Gyokeres", Nation: "SWE", Position: "FW", Age: 28, Height: 189, Club: "Arsenal FC" },
-                { Player: "Lamine Yamal", Nation: "ESP", Position: "FW", Age: 18, Height: 183, Club: "FC Barcelona" },
-                { Player: "Nico Williams", Nation: "ESP", Position: "FW", Age: 23, Height: 181, Club: "Athletic Club" },
-                { Player: "Christian Pulisic", Nation: "USA", Position: "FW", Age: 27, Height: 177, Club: "AC Milan" }
-            ];
-            WORLD_CUP_DATABASE = rawRoster.map(p => patchMissingMetrics(p));
-            runDataPipeline();
         }
 
         function computeOverallRoleScore(player, roleKey) {
@@ -370,11 +381,12 @@
         function findBestSuitedRole(player) {
             let highRole = ""; let maxScore = -1;
             Object.keys(profileWeightingMatrices).forEach(rk => {
-                let s = parseInt(computeOverallRoleScore(player, rk));
-                if (s > maxScore) { maxScore = s; highRole = rk; }
+                if (profileWeightingMatrices[rk].type === player.Position) {
+                    let s = parseInt(computeOverallRoleScore(player, rk));
+                    if (s > maxScore) { maxScore = s; highRole = rk; }
+                }
             });
-            const readableNames = { "TargetMan": "Target No.9", "InsideForward": "Inside Forward", "DLP": "Deep Progressor", "BallWinner": "Destroyer" };
-            return readableNames[highRole] || "Generalist";
+            return profileWeightingMatrices[highRole]?.label || "Generalist";
         }
 
         function switchView(target) {
@@ -399,7 +411,7 @@
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
-            // 1. FILTER INTERACTIVE DROPDOWNS BY ACTIVE SPECIFICATIONS
+            // 1. FILTER DROPDOWN OPTIONS (role matching target structural positions)
             let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
             if (nation !== 'all') dropdownList = dropdownList.filter(p => p.Nation === nation);
 
@@ -411,23 +423,25 @@
             sS.innerHTML = ''; sA.innerHTML = ''; sB.innerHTML = '';
 
             dropdownList.forEach(p => {
-                sS.appendChild(new Option(p.Player, p.Player));
-                sA.appendChild(new Option(p.Player, p.Player));
-                sB.appendChild(new Option(p.Player, p.Player));
+                // Formatting Requirement: First Name Surname (Position)
+                let textLabel = `${p.CleanName} (${p.Position})`;
+                sS.appendChild(new Option(textLabel, p.Player));
+                sA.appendChild(new Option(textLabel, p.Player));
+                sB.appendChild(new Option(textLabel, p.Player));
             });
 
             sS.value = dropdownList.some(p => p.Player === prevS) ? prevS : dropdownList[0]?.Player || '';
             sA.value = dropdownList.some(p => p.Player === prevA) ? prevA : dropdownList[0]?.Player || '';
             sB.value = dropdownList.some(p => p.Player === prevB) ? prevB : (dropdownList[1] ? dropdownList[1].Player : dropdownList[0]?.Player || '');
 
-            // 2. RUN LEADERBOARD CALCULATIONS
+            // 2. LEADERSHIP LIST RANKINGS FILTER MATRIX
             let activeDataset = WORLD_CUP_DATABASE.map(p => {
                 let fitScore = computeOverallRoleScore(p, role);
                 return { ...p, fitScore: parseInt(fitScore) };
             });
 
             if (nation !== 'all') activeDataset = activeDataset.filter(p => p.Nation === nation);
-            if (query) activeDataset = activeDataset.filter(p => p.Player.toLowerCase().includes(query));
+            if (query) activeDataset = activeDataset.filter(p => p.Player.toLowerCase().includes(query) || p.CleanName.toLowerCase().includes(query));
 
             let rankingsSet = activeDataset.filter(p => p.Position === targetType).sort((a,b) => b.fitScore - a.fitScore);
 
@@ -439,11 +453,12 @@
 
         function renderSingleCardLayout() {
             const role = document.getElementById('roleSelector').value;
+            const isGK = profileWeightingMatrices[role].type === "GK";
             const p = WORLD_CUP_DATABASE.find(player => player.Player === document.getElementById('selSinglePlayer').value);
             if (!p) return;
 
             let score = computeOverallRoleScore(p, role);
-            document.getElementById('sName').innerText = p.Player;
+            document.getElementById('sName').innerText = `${p.CleanName} (${p.Position})`;
             document.getElementById('sClub').innerText = p.Club || 'Unknown';
             document.getElementById('sScore').innerText = `${score}%`;
             document.getElementById('sBio').innerHTML = `
@@ -461,11 +476,14 @@
                 let val = p[attr] !== undefined ? p[attr] : 0;
                 let displayVal = attr.includes('pct') ? `${val}%` : val;
                 let isCore = coreMetrics.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
+                
+                // Swap readable label strings if viewing a specialized goalkeeper profile
+                let printLabel = (isGK && gkLabelOverrides[attr]) ? gkLabelOverrides[attr] : attr.replace(/_/g, ' ');
 
                 let div = document.createElement('div');
                 div.className = 'matrix-row-card';
                 div.innerHTML = `
-                    <div class="metric-label single-view" ${isCore}>${attr.replace(/_/g, ' ')}</div>
+                    <div class="metric-label single-view" ${isCore}>${printLabel}</div>
                     <div class="val-box right" style="width:40%;"><span class="scout-badge ${getBadgeClass(attr, val)}">${displayVal}</span></div>
                 `;
                 container.appendChild(div);
@@ -474,6 +492,7 @@
 
         function renderComparisonCards() {
             const role = document.getElementById('roleSelector').value;
+            const isGK = profileWeightingMatrices[role].type === "GK";
             const pA = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerA').value);
             const pB = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerB').value);
 
@@ -482,7 +501,7 @@
             let scoreA = computeOverallRoleScore(pA, role);
             let scoreB = computeOverallRoleScore(pB, role);
 
-            document.getElementById('nameA').innerText = pA.Player;
+            document.getElementById('nameA').innerText = `${pA.CleanName} (${pA.Position})`;
             document.getElementById('clubA').innerText = pA.Club || 'Unknown';
             document.getElementById('scoreA').innerText = `${scoreA}%`;
             document.getElementById('bioA').innerHTML = `
@@ -492,7 +511,7 @@
                 <span>Height: <strong>${pA.Height || '-'} cm</strong></span>
             `;
 
-            document.getElementById('nameB').innerText = pB.Player;
+            document.getElementById('nameB').innerText = `${pB.CleanName} (${pB.Position})`;
             document.getElementById('clubB').innerText = pB.Club || 'Unknown';
             document.getElementById('scoreB').innerText = `${scoreB}%`;
             document.getElementById('bioB').innerHTML = `
@@ -513,11 +532,13 @@
                 let displayB = attr.includes('pct') ? `${vB}%` : vB;
 
                 let isCore = coreMetrics.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
+                let printLabel = (isGK && gkLabelOverrides[attr]) ? gkLabelOverrides[attr] : attr.replace(/_/g, ' ');
+
                 let div = document.createElement('div');
                 div.className = 'matrix-row-card';
                 div.innerHTML = `
                     <div class="val-box left"><span class="scout-badge ${getBadgeClass(attr, vA)}">${displayA}</span></div>
-                    <div class="metric-label" ${isCore}>${attr.replace(/_/g, ' ')}</div>
+                    <div class="metric-label" ${isCore}>${printLabel}</div>
                     <div class="val-box right"><span class="scout-badge ${getBadgeClass(attr, vB)}">${displayB}</span></div>
                 `;
                 container.appendChild(div);
@@ -538,7 +559,7 @@
                 div.className = 'list-row';
                 div.innerHTML = `
                     <div>
-                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.Player}</div>
+                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.CleanName} (${p.Position})</div>
                         <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — ${p.Nation || '-'}</div>
                     </div>
                     <div style="font-weight:800; color:var(--emerald-green); font-size:14px;">${p.fitScore}% Match</div>
@@ -556,7 +577,7 @@
                 div.className = 'list-row';
                 div.innerHTML = `
                     <div>
-                        <div style="font-weight:700; font-size:14px; color:white;">${p.Player} (${p.Position || '-'})</div>
+                        <div style="font-weight:700; font-size:14px; color:white;">${p.CleanName} (${p.Position || '-'})</div>
                         <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club || 'Unknown'} — Nation: ${p.Nation || '-'} — Age: ${p.Age || '-'}</div>
                     </div>
                     <div style="font-weight:600; color:var(--neon-blue); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Best Suit: ${bestRole}</div>
