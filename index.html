@@ -433,9 +433,9 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // Directly map native clean structural variables from the fixed CSV file
+                // Directly use the pristine clean strings from your new CSV file
                 obj.CleanName = String(obj.Player || "").trim();
-                obj.Club = String(obj.Club || "International FA").trim();
+                obj.Club = String(obj.Club || "Unknown Club").trim();
                 
                 return obj;
             });
