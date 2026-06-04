@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ProScout 2026 // World Cup Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-canvas: #0b0f19;
+            --bg-surface: #121826;
+            --bg-card: #1b2336;
+            --border-muted: #26314d;
+            --neon-blue: #00d2ff;
+            --emerald-green: #05ffa1;
+            --amber-gold: #ffb800;
+            --text-main: #f3f4f6;
+            --text-muted: #7e8da8;
+        }
+
+        body {
+            margin: 0; padding: 12px;
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            box-sizing: border-box;
+        }
+
+        h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; margin: 0 0 4px 0; color: #ffffff; }
+        .accent-txt { color: var(--neon-blue); }
+        .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 20px 0 10px 0; letter-spacing: 0.5px;}
+
+        /* Premium Filter Suite */
+        .filter-wrapper {
+            background: var(--bg-surface); border: 1px solid var(--border-muted);
+            border-radius: 10px; padding: 12px; margin-bottom: 16px;
+        }
+        .search-field {
+            width: 100%; background: var(--bg-card); border: 1px solid var(--border-muted);
+            padding: 12px; border-radius: 6px; color: white; font-family: 'Inter';
+            font-size: 14px; box-sizing: border-box; outline: none; margin-bottom: 10px;
+        }
+        .search-field:focus { border-color: var(--neon-blue); }
+        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select {
+            width: 100%; background: var(--bg-card); border: 1px solid var(--border-muted);
+            padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none;
+        }
+
+        /* Twin Comparison Deck */
+        .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .scout-card {
+            background: var(--bg-surface); border: 1px solid var(--border-muted);
+            border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card-header-block { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+        .p-name { font-size: 14px; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-club { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rating-pct { font-size: 26px; font-weight: 800; color: var(--emerald-green); line-height: 1; }
+
+        .bio-strip {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px;
+            margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-muted);
+            font-size: 11px; color: var(--text-muted);
+        }
+        .bio-strip span strong { color: white; font-weight: 600; }
+
+        /* Performance Attribute Rows */
+        .matrix-row-card {
+            background: var(--bg-surface); border: 1px solid var(--border-muted);
+            border-radius: 6px; padding: 8px 12px; margin-bottom: 5px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .val-box { width: 25%; font-size: 13px; font-weight: 600; }
+        .val-box.left { text-align: left; }
+        .val-box.right { text-align: right; }
+        .metric-label { width: 50%; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+
+        /* Custom Data Badges */
+        .scout-badge {
+            display: inline-block; padding: 2px 6px; font-weight: 700;
+            border-radius: 4px; font-size: 11px; min-width: 16px; text-align: center;
+        }
+        .tier-elite { background: rgba(5,255,161,0.1); color: var(--emerald-green); border: 1px solid rgba(5,255,161,0.25); }
+        .tier-good { background: rgba(0,210,255,0.1); color: var(--neon-blue); border: 1px solid rgba(0,210,255,0.25); }
+        .tier-avg { background: rgba(255,184,0,0.1); color: var(--amber-gold); border: 1px solid rgba(255,184,0,0.25); }
+
+        /* Dynamic Navigation Tabs */
+        .tab-bar { display: flex; gap: 16px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; }
+        .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 700; padding: 8px 4px; cursor: pointer; }
+        .tab-btn.active { color: var(--neon-blue); border-bottom: 2px solid var(--neon-blue); }
+        
+        .list-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 4px; border-bottom: 1px solid var(--border-muted);
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <h1>ProScout <span class="accent-txt">2026</span></h1>
+    <div class="subtitle">International Data Analytics & Scouting Feed</div>
+
+    <div class="filter-wrapper">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search elite tournament profiles... (e.g. Mbappe, Rice, Wirtz)">
+        <div class="filter-grid">
+            <div>
+                <select id="roleSelector">
+                    <option value="TargetMan">Profile: Target No.9</option>
+                    <option value="InsideForward">Profile: Inside Forward</option>
+                    <option value="DLP">Profile: Deep-Lying Progressor</option>
+                    <option value="BallWinner">Profile: Defensive Destroyer</option>
+                </select>
+            </div>
+            <div>
+                <select id="nationSelector">
+                    <option value="all">All Squads</option>
+                    <option value="ARG">Argentina</option>
+                    <option value="ENG">England</option>
+                    <option value="FRA">France</option>
+                    <option value="GER">Germany</option>
+                    <option value="BRA">Brazil</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" id="tabH2h" onclick="switchView('h2h')">H2H Comparison</button>
+        <button class="tab-btn" id="tabList" onclick="switchView('list')">Rankings Matrix</button>
+    </div>
+
+    <!-- PANEL 1: COMPARISON VIEW -->
+    <div id="viewH2h">
+        <div class="filter-grid" style="margin-bottom: 12px;">
+            <div><select id="selPlayerA"></select></div>
+            <div><select id="selPlayerB"></select></div>
+        </div>
+
+        <div class="profile-deck">
+            <div class="scout-card">
+                <div class="card-header-block">
+                    <div>
+                        <div class="p-name" id="nameA">-</div>
+                        <div class="p-club" id="clubA">-</div>
+                    </div>
+                    <div class="rating-pct" id="scoreA">0%</div>
+                </div>
+                <div class="bio-strip" id="bioA"></div>
+            </div>
+            <div class="scout-card">
+                <div class="card-header-block">
+                    <div>
+                        <div class="p-name" id="nameB">-</div>
+                        <div class="p-club" id="clubB">-</div>
+                    </div>
+                    <div class="rating-pct" id="scoreB">0%</div>
+                </div>
+                <div class="bio-strip" id="bioB"></div>
+            </div>
+        </div>
+
+        <h3>Scouting Attribute Comparison</h3>
+        <div id="matrixAnchor"></div>
+    </div>
+
+    <!-- PANEL 2: LEADERBOARD VIEW -->
+    <div id="viewList" class="hidden">
+        <div id="rankingsAnchor"></div>
+    </div>
+
+    <script>
+       // THIS REPLACES THE OLD STATIC HARDCODED DATA ARRAY
+let currentDataset = [];
+
+// AUTOMATIC DATA CHANNEL FETCH PIPELINE
+async function loadTournamentDatabase() {
+    try {
+        // Fetches the real world_cup_2026_master.csv file straight from your repository
+        const response = await fetch('world_cup_2026_master.csv');
+        const csvText = await response.text();
+        
+        // Convert the spreadsheet rows into a live JavaScript array
+        currentDataset = parseCSVRows(csvText);
+        
+        // Run the filters and populate the mobile view dropdowns
+        runDataPipeline();
+    } catch (error) {
+        console.error("Error loading tournament database sheet:", error);
+    }
+}
+
+function parseCSVRows(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const headers = lines[0].split(',');
+    
+    return lines.slice(1).map(line => {
+        const fields = line.split(',');
+        let obj = {};
+        headers.forEach((h, idx) => {
+            let val = fields[idx];
+            obj[h] = isNaN(val) ? val : parseFloat(val);
+        });
+        return obj;
+    });
+}
+
+// Triggers the data loader the moment the web page boots up on a smartphone
+window.onload = loadTournamentDatabase;
+    </script>
+</body>
+</html>
