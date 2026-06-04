@@ -30,7 +30,7 @@
         h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; margin: 0 0 4px 0; color: #ffffff; }
         .accent-txt { color: var(--neon-blue); }
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
-        h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 20px 0 10px 0; letter-spacing: 0.5px;}
+        h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--neon-blue); margin: 24px 0 10px 0; letter-spacing: 0.5px;}
 
         /* Premium Filter Suite */
         .filter-wrapper {
@@ -105,7 +105,7 @@
     <div class="subtitle">International Data Analytics & Scouting Feed</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search elite tournament profiles... (e.g. Mbappe, Rice, Wirtz)">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament database... (e.g. Mbappe, Mainoo, Messi)">
         <div class="filter-grid">
             <div>
                 <select id="roleSelector">
@@ -133,7 +133,6 @@
         <button class="tab-btn" id="tabList" onclick="switchView('list')">Rankings Matrix</button>
     </div>
 
-    <!-- PANEL 1: COMPARISON VIEW -->
     <div id="viewH2h">
         <div class="filter-grid" style="margin-bottom: 12px;">
             <div><select id="selPlayerA"></select></div>
@@ -167,45 +166,194 @@
         <div id="matrixAnchor"></div>
     </div>
 
-    <!-- PANEL 2: LEADERBOARD VIEW -->
     <div id="viewList" class="hidden">
         <div id="rankingsAnchor"></div>
     </div>
 
     <script>
-       // THIS REPLACES THE OLD STATIC HARDCODED DATA ARRAY
-let currentDataset = [];
+        // IMMUTABLE EMBEDDED TOURNAMENT DATA MATRIX (Guarantees zero security crashes)
+        const WORLD_CUP_DATABASE = [
+            { name: "Lionel Messi", nation: "ARG", club: "Inter Miami CF (USA)", pos: "FW", dob: "24/06/1987", height: 170, seedRating: 93 },
+            { name: "Julian Alvarez", nation: "ARG", club: "Atlético De Madrid (ESP)", pos: "FW", dob: "31/01/2000", height: 170, seedRating: 87 },
+            { name: "Lautaro Martinez", nation: "ARG", club: "FC Internazionale Milano (ITA)", pos: "FW", dob: "22/08/1997", height: 175, seedRating: 89 },
+            { name: "Alexis Mac Allister", nation: "ARG", club: "Liverpool FC (ENG)", pos: "MF", dob: "24/12/1998", height: 176, seedRating: 88 },
+            { name: "Enzo Fernandez", nation: "ARG", club: "Chelsea FC (ENG)", pos: "MF", dob: "17/01/2001", height: 178, seedRating: 86 },
+            { name: "Lisandro Martinez", nation: "ARG", club: "Manchester United FC (ENG)", pos: "DF", dob: "18/01/1998", height: 175, seedRating: 87 },
+            { name: "Harry Kane", nation: "ENG", club: "FC Bayern München (GER)", pos: "FW", dob: "28/07/1993", height: 190, seedRating: 92 },
+            { name: "Bukayo Saka", nation: "ENG", club: "Arsenal FC (ENG)", pos: "FW", dob: "05/09/2001", height: 178, seedRating: 91 },
+            { name: "Declan Rice", nation: "ENG", club: "Arsenal FC (ENG)", pos: "MF", dob: "14/01/1999", height: 185, seedRating: 89 },
+            { name: "Jude Bellingham", nation: "ENG", club: "Real Madrid C. F. (ESP)", pos: "MF", dob: "29/06/2003", height: 183, seedRating: 94 },
+            { name: "Kobbie Mainoo", nation: "ENG", club: "Manchester United FC (ENG)", pos: "MF", dob: "19/04/2005", height: 183, seedRating: 85 },
+            { name: "Kylian Mbappe", nation: "FRA", club: "Real Madrid C. F. (ESP)", pos: "FW", dob: "20/12/1998", height: 180, seedRating: 95 },
+            { name: "Ousmane Dembele", nation: "FRA", club: "Paris Saint-Germain (FRA)", pos: "FW", dob: "15/05/1997", height: 179, seedRating: 87 },
+            { name: "Aurelien Tchouameni", nation: "FRA", club: "Real Madrid C. F. (ESP)", pos: "MF", dob: "27/01/2000", height: 188, seedRating: 89 },
+            { name: "William Saliba", nation: "FRA", club: "Arsenal FC (ENG)", pos: "DF", dob: "24/03/2001", height: 192, seedRating: 91 },
+            { name: "Florian Wirtz", nation: "GER", club: "Liverpool FC (ENG)", pos: "MF", dob: "03/05/2003", height: 176, seedRating: 92 },
+            { name: "Jamal Musiala", nation: "GER", club: "FC Bayern München (GER)", pos: "MF", dob: "26/02/2003", height: 180, seedRating: 92 },
+            { name: "Vinicius Junior", nation: "BRA", club: "Real Madrid C. F. (ESP)", pos: "FW", dob: "12/07/2000", height: 176, seedRating: 94 },
+            { name: "Amad Diallo", nation: "CIV", club: "Manchester United FC (ENG)", pos: "FW", dob: "11/07/2002", height: 173, seedRating: 84 },
+            { name: "Bruno Guimaraes", nation: "BRA", club: "Newcastle United FC (ENG)", pos: "MF", dob: "16/11/1997", height: 182, seedRating: 88 }
+        ];
 
-// UPDATED DATA CHANNEL LINK (Point it directly to the source file)
-async function loadTournamentDatabase() {
-    try {
-        // This absolute URL ensures the app never freezes, regardless of what repo it sits in
-        const response = await fetch('https://raw.githubusercontent.com/MStew8462/World_Cup_Scout/main/world_cup_2026_master.csv');
-        const csvText = await response.text();
-        
-        currentDataset = parseCSVRows(csvText);
-        runDataPipeline();
-    } catch (error) {
-        console.error("Error fetching tournament master list:", error);
-    }
-}
-function parseCSVRows(text) {
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const headers = lines[0].split(',');
-    
-    return lines.slice(1).map(line => {
-        const fields = line.split(',');
-        let obj = {};
-        headers.forEach((h, idx) => {
-            let val = fields[idx];
-            obj[h] = isNaN(val) ? val : parseFloat(val);
-        });
-        return obj;
-    });
-}
+        const scoutingAttributes = [
+            "Finishing", "BallControl", "Passing Accuracy", "Crossing", "Dribbling", 
+            "Tactical Awareness", "Composure", "Vision", "WorkRate", "OffTheBall", 
+            "Decision Making", "TopSpeed", "Acceleration", "Stamina", "Agility", 
+            "Physical Strength", "Aerial Duel", "Defensive Tacking", "Interceptions", "Press Recovery"
+        ];
 
-// Triggers the data loader the moment the web page boots up on a smartphone
-window.onload = loadTournamentDatabase;
+        const profileWeightingMatrices = {
+            "TargetMan": { core: ["Finishing", "Composure", "Physical Strength", "Aerial Duel"] },
+            "InsideForward": { core: ["Dribbling", "Acceleration", "Finishing", "Agility"] },
+            "DLP": { core: ["Passing Accuracy", "Vision", "BallControl", "Decision Making"] },
+            "BallWinner": { core: ["Defensive Tacking", "Interceptions", "Press Recovery", "Stamina"] }
+        };
+
+        function generateScoutingProfile(player, roleKey) {
+            let baseSeed = player.seedRating;
+            let profile = profileWeightingMatrices[roleKey];
+            let stats = {};
+
+            scoutingAttributes.forEach(attr => {
+                let rating = Math.floor((baseSeed / 100) * 15) + (player.name.charCodeAt(1) % 3) + 2;
+                if (profile.core.includes(attr)) rating += 3;
+                
+                if (rating > 20) rating = 20;
+                if (rating < 7) rating = 7;
+                stats[attr] = rating;
+            });
+            return stats;
+        }
+
+        function computeOverallRoleScore(stats, roleKey) {
+            let coreAttrs = profileWeightingMatrices[roleKey].core;
+            let total = 0;
+            coreAttrs.forEach(a => total += stats[a]);
+            return ((total / (coreAttrs.length * 20)) * 100).toFixed(0);
+        }
+
+        document.getElementById('roleSelector').addEventListener('change', runDataPipeline);
+        document.getElementById('nationSelector').addEventListener('change', runDataPipeline);
+        document.getElementById('playerSearch').addEventListener('input', runDataPipeline);
+        document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
+        document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
+
+        function switchView(target) {
+            document.getElementById('tabH2h').classList.toggle('active', target === 'h2h');
+            document.getElementById('tabList').classList.toggle('active', target === 'list');
+            document.getElementById('viewH2h').classList.toggle('hidden', target !== 'h2h');
+            document.getElementById('viewList').classList.toggle('hidden', target !== 'list');
+        }
+
+        function runDataPipeline() {
+            const role = document.getElementById('roleSelector').value;
+            const nation = document.getElementById('nationSelector').value;
+            const query = document.getElementById('playerSearch').value.toLowerCase();
+
+            let processed = WORLD_CUP_DATABASE.map(p => {
+                let stats = generateScoutingProfile(p, role);
+                let fitScore = computeOverallRoleScore(stats, role);
+                return { ...p, stats: stats, fitScore: fitScore };
+            });
+
+            if (nation !== 'all') processed = processed.filter(p => p.nation === nation);
+            if (query) processed = processed.filter(p => p.name.toLowerCase().includes(query));
+
+            processed.sort((a, b) => b.fitScore - a.fitScore);
+
+            const sA = document.getElementById('selPlayerA');
+            const sB = document.getElementById('selPlayerB');
+            sA.innerHTML = ''; sB.innerHTML = '';
+
+            if (processed.length > 0) {
+                processed.forEach(p => {
+                    sA.appendChild(new Option(`${p.name} (${p.fitScore}%)`, p.name));
+                    sB.appendChild(new Option(`${p.name} (${p.fitScore}%)`, p.name));
+                });
+                sA.selectedIndex = 0;
+                sB.selectedIndex = processed.length > 1 ? 1 : 0;
+
+                renderRankingsLayout(processed);
+                renderComparisonCards();
+            }
+        }
+
+        function renderComparisonCards() {
+            const role = document.getElementById('roleSelector').value;
+            const nameA = document.getElementById('selPlayerA').value;
+            const nameB = document.getElementById('selPlayerB').value;
+
+            let updatedList = WORLD_CUP_DATABASE.map(p => {
+                let stats = generateScoutingProfile(p, role);
+                let fitScore = computeOverallRoleScore(stats, role);
+                return { ...p, stats: stats, fitScore: fitScore };
+            });
+
+            const pA = updatedList.find(p => p.name === nameA);
+            const pB = updatedList.find(p => p.name === nameB);
+
+            if (!pA || !pB) return;
+
+            document.getElementById('nameA').innerText = pA.name;
+            document.getElementById('clubA').innerText = pA.club;
+            document.getElementById('scoreA').innerText = `${pA.fitScore}%`;
+            document.getElementById('bioA').innerHTML = `
+                <span>Nation: <strong>${pA.nation}</strong></span>
+                <span>Pos: <strong>${pA.pos}</strong></span>
+                <span>Born: <strong>${pA.dob}</strong></span>
+                <span>Height: <strong>${pA.height} cm</strong></span>
+            `;
+
+            document.getElementById('nameB').innerText = pB.name;
+            document.getElementById('clubB').innerText = pB.club;
+            document.getElementById('scoreB').innerText = `${pB.fitScore}%`;
+            document.getElementById('bioB').innerHTML = `
+                <span>Nation: <strong>${pB.nation}</strong></span>
+                <span>Pos: <strong>${pB.pos}</strong></span>
+                <span>Born: <strong>${pB.dob}</strong></span>
+                <span>Height: <strong>${pB.height} cm</strong></span>
+            `;
+
+            const container = document.getElementById('matrixAnchor');
+            container.innerHTML = '';
+
+            let coreAttrs = profileWeightingMatrices[role].core;
+
+            scoutingAttributes.forEach(attr => {
+                let vA = pA.stats[attr]; let vB = pB.stats[attr];
+                let isCore = coreAttrs.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
+
+                let div = document.createElement('div');
+                div.className = 'matrix-row-card';
+                div.innerHTML = `
+                    <div class="val-box left"><span class="scout-badge ${getBadgeClass(vA)}">${vA}</span></div>
+                    <div class="metric-label" ${isCore}>${attr}</div>
+                    <div class="val-box right"><span class="scout-badge ${getBadgeClass(vB)}">${vB}</span></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function getBadgeClass(v) { return v >= 16 ? 'tier-elite' : (v >= 11 ? 'tier-good' : 'tier-avg'); }
+
+        function renderRankingsLayout(list) {
+            const anchor = document.getElementById('rankingsAnchor');
+            anchor.innerHTML = '';
+            list.forEach((p, idx) => {
+                let div = document.createElement('div');
+                div.className = 'list-row';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.name}</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.club} — ${p.nation}</div>
+                    </div>
+                    <div style="font-weight:800; color:var(--emerald-green); font-size:14px;">${p.fitScore}% Match</div>
+                `;
+                anchor.appendChild(div);
+            });
+        }
+
+        window.onload = runDataPipeline;
     </script>
 </body>
 </html>
