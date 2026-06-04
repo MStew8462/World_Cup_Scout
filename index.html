@@ -412,7 +412,7 @@
         }
 
                 // ADVANCED SCROLL SCANNED PARSE ENGINE
-                        function parseCSVEngine(text) {
+                                function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
             
@@ -434,20 +434,31 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // 1. BULLETPROOF NAME PARSER
+                // 1. MOTOR DE LIMPEZA E DESDUPLICAÇÃO DE NOMES
                 try {
                     let rawPlayer = String(obj.Player || "").trim();
                     
-                    // Drop positional initials completely (Fw, Mf, Df, Gk)
+                    // Limpa prefixos de posição (Fw, Mf, Df, Gk)
                     let nameClean = rawPlayer.replace(/^(FW|MF|DF|GK)\s+/i, '').trim();
+                    
+                    // Remove números soltos no final (ex: o "16" do Almada)
+                    nameClean = nameClean.replace(/\s+\d+$/, '').trim();
+                    
                     let tokens = nameClean.split(/\s+/);
                     
-                    if (tokens.length >= 2) {
-                        // The file has Surname first (e.g., "Mandi Aissa")
-                        // Take the last words as the first name, and the first word as the surname
-                        let surname = tokens[0];
-                        let firstNames = tokens.slice(1).join(" ");
-                        
+                    // Filtra palavras duplicadas consecutivas ou repetidas no bloco
+                    let uniqueTokens = [];
+                    tokens.forEach(token => {
+                        let lowerToken = token.toLowerCase();
+                        if (!uniqueTokens.map(t => t.toLowerCase()).includes(lowerToken)) {
+                            uniqueTokens.push(token);
+                        }
+                    });
+                    
+                    // Caso o apelido venha primeiro (ex: "Almada Thiago"), invertemos
+                    if (uniqueTokens.length >= 2) {
+                        let surname = uniqueTokens[0];
+                        let firstNames = uniqueTokens.slice(1).join(" ");
                         obj.CleanName = toTitleCase(firstNames) + " " + toTitleCase(surname);
                     } else {
                         obj.CleanName = toTitleCase(nameClean);
@@ -456,13 +467,13 @@
                     obj.CleanName = String(obj.Player || "Unknown Player");
                 }
                 
-                // 2. BULLETPROOF CLUB NAMES
-                // Directly pass the full club string saved in the CSV natively
+                // 2. FORMATAÇÃO E SUPORTE DE CLUBES
                 obj.Club = obj.Club ? String(obj.Club).trim() : "Unknown Club";
                 
-                // Final hardcoded manual alignment overrides
+                // Correções Manuais de Alinhamento Finais
                 if (obj.CleanName.toUpperCase().includes("MAHREZ")) obj.CleanName = "Riyad Mahrez";
                 if (obj.CleanName.toUpperCase().includes("BELGHALI")) obj.CleanName = "Rafik Belghali";
+                if (obj.CleanName.toUpperCase().includes("ALMADA")) obj.CleanName = "Thiago Almada";
                 if (obj.CleanName.toUpperCase().includes("ALFIE") || obj.CleanName.toUpperCase().includes("JONES")) {
                     if (String(obj.Club).toUpperCase().includes("HULL")) obj.CleanName = "Alfie Jones";
                 }
