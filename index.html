@@ -293,20 +293,31 @@
             "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", metrics: [{ name: "Clearances_per90", target: 1.5, weight: 0.4 }, { name: "PassesAttempted_per90", target: 35.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 84.0, weight: 0.3 }] }
         };
 
-        // HELPER FUNCTION: Transposes names cleanly to First Name Surname format
-        function formatDisplayName(rawName) {
-            if (!rawName) return "-";
-            let tokens = rawName.trim().split(/\s+/);
-            if (tokens.length < 2) return rawName;
-            
-            // If PDF output clumped multiple uppercase surnames at the front, handle gracefully
-            if (tokens[0] === tokens[0].toUpperCase() && tokens.length > 1) {
-                let surname = tokens[0];
-                let firstname = tokens.slice(1).join(" ");
-                return `${firstname} ${surname}`;
-            }
-            return rawName; 
-        }
+        // REVOLUTIONARY NAME PROCESSING ENGINE:
+// Strips structural prefixes, handles capitalization flips, and forms true First Name Surname strings
+function formatDisplayName(rawName) {
+    if (!rawName) return "-";
+    
+    // 1. Instantly scrub away any accidental position prefix blocks left by the PDF reader
+    let clean = rawName.replace(/^(GK|DF|MF|FW)\s+/i, '').trim();
+    
+    let tokens = clean.split(/\s+/);
+    if (tokens.length < 2) return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+    
+    // 2. Identify if the first block token is the strict capitalised Surname (e.g. "MAHREZ")
+    // If the first word is all uppercase and more than 1 character, it's the Last Name!
+    if (tokens[0] === tokens[0].toUpperCase() && tokens[0].length > 1) {
+        let surname = tokens[0].charAt(0).toUpperCase() + tokens[0].slice(1).toLowerCase();
+        
+        // Re-assemble the remaining tokens as the given First Names (formatted cleanly to Title Case)
+        let firstNames = tokens.slice(1).map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).join(" ");
+        
+        return `${firstNames} ${surname}`;
+    }
+    
+    // Fallback: If it's already mixed case, just pass it through as clean Title Case words
+    return tokens.map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).join(" ");
+}
 
         function patchMissingMetrics(player) {
             let patched = { ...player };
