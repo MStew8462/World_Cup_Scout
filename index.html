@@ -412,7 +412,7 @@
         }
 
                 // ADVANCED SCROLL SCANNED PARSE ENGINE
-                                function parseCSVEngine(text) {
+                                        function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
             
@@ -434,31 +434,21 @@
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
                 
-                // 1. MOTOR DE LIMPEZA E DESDUPLICAÇÃO DE NOMES
+                // 1. UNIVERSAL POSITION-STRIPPING NAME FLIPPER
                 try {
                     let rawPlayer = String(obj.Player || "").trim();
                     
-                    // Limpa prefixos de posição (Fw, Mf, Df, Gk)
+                    // Instantly strip prefix tags (FW, MF, DF, GK) from the front
                     let nameClean = rawPlayer.replace(/^(FW|MF|DF|GK)\s+/i, '').trim();
                     
-                    // Remove números soltos no final (ex: o "16" do Almada)
-                    nameClean = nameClean.replace(/\s+\d+$/, '').trim();
-                    
                     let tokens = nameClean.split(/\s+/);
-                    
-                    // Filtra palavras duplicadas consecutivas ou repetidas no bloco
-                    let uniqueTokens = [];
-                    tokens.forEach(token => {
-                        let lowerToken = token.toLowerCase();
-                        if (!uniqueTokens.map(t => t.toLowerCase()).includes(lowerToken)) {
-                            uniqueTokens.push(token);
-                        }
-                    });
-                    
-                    // Caso o apelido venha primeiro (ex: "Almada Thiago"), invertemos
-                    if (uniqueTokens.length >= 2) {
-                        let surname = uniqueTokens[0];
-                        let firstNames = uniqueTokens.slice(1).join(" ");
+                    if (tokens.length >= 2) {
+                        // The database stores Surname First (e.g., "Almada Thiago Ezequiel")
+                        // Isolate the first token as the surname
+                        let surname = tokens[0];
+                        // Take all remaining tokens as the given first names
+                        let firstNames = tokens.slice(1).join(" ");
+                        
                         obj.CleanName = toTitleCase(firstNames) + " " + toTitleCase(surname);
                     } else {
                         obj.CleanName = toTitleCase(nameClean);
@@ -467,16 +457,9 @@
                     obj.CleanName = String(obj.Player || "Unknown Player");
                 }
                 
-                // 2. FORMATAÇÃO E SUPORTE DE CLUBES
+                // 2. UNIVERSAL CLUB TITLE PERSISTENCE
+                // Reads the full club name columns exactly as they are written in the CSV
                 obj.Club = obj.Club ? String(obj.Club).trim() : "Unknown Club";
-                
-                // Correções Manuais de Alinhamento Finais
-                if (obj.CleanName.toUpperCase().includes("MAHREZ")) obj.CleanName = "Riyad Mahrez";
-                if (obj.CleanName.toUpperCase().includes("BELGHALI")) obj.CleanName = "Rafik Belghali";
-                if (obj.CleanName.toUpperCase().includes("ALMADA")) obj.CleanName = "Thiago Almada";
-                if (obj.CleanName.toUpperCase().includes("ALFIE") || obj.CleanName.toUpperCase().includes("JONES")) {
-                    if (String(obj.Club).toUpperCase().includes("HULL")) obj.CleanName = "Alfie Jones";
-                }
                 
                 return obj;
             });
