@@ -256,7 +256,7 @@
             "TargetMan": { type: "FW", metrics: [{ name: "xG_per90", target: 0.60, weight: 0.3 }, { name: "Shots_per90", target: 3.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.5, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.3 }] },
             "InsideForward": { type: "FW", metrics: [{ name: "DribblesCompleted_per90", target: 2.5, weight: 0.3 }, { name: "ProgressiveCarries_per90", target: 4.5, weight: 0.2 }, { name: "TouchesInBox_per90", target: 5.0, weight: 0.2 }, { name: "xG_per90", target: 0.45, weight: 0.3 }] },
             "DLP": { type: "MF", metrics: [{ name: "PassesAttempted_per90", target: 65.0, weight: 0.3 }, { name: "PassesCompleted_pct", target: 88.0, weight: 0.3 }, { name: "ProgressivePasses_per90", target: 6.5, weight: 0.2 }, { name: "KeyPasses_per90", target: 1.8, weight: 0.2 }] },
-            "BallWinner": { type: "MF", metrics: [{ name: "TacklesWon_per90", target: 2.8, weight: 0.3 }, { name: "Interceptions_per90", target: 1.8, weight: 0.3 }, { name: "Blocks_per90", target: 2.0, weight: 0.2 }, { name: "Stamina", target: 15.0, weight: 0.2 }] }
+            "BallWinner": { type: "MF", metrics: [{ name: "TacklesWon_per90", target: 2.8, weight: 0.3 }, { name: "Interceptions_per90", target: 1.8, weight: 0.3 }, { name: "Blocks_per90", target: 2.0, weight: 0.2 }, { name: "AerialDuelsWon_per90", target: 2.0, weight: 0.2 }] }
         };
 
         function patchMissingMetrics(player) {
@@ -278,30 +278,47 @@
 
         async function loadTournamentDatabase() {
             try {
-                const response = await fetch('./world_cup_2026_master.csv');
+                const response = await fetch('world_cup_2026_master.csv');
                 if (!response.ok) throw new Error("File empty");
                 const csvText = await response.text();
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 runDataPipeline();
             } catch (error) {
+                console.log("CSV load failed, using local context fallback", error);
                 generateDatabaseFromRosterContext();
             }
         }
 
+        // FIXED ENGINE: Automatically un-quotes fields so Quote_All CSV data strings parse into true variables
         function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
-            const headers = lines[0].split(',').map(h => h.trim());
+            
+            // Clean quote marks out of headers line array
+            const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+            
             return lines.slice(1).map(line => {
-                const fields = line.split(',').map(f => f.trim());
+                // Split headers safely while managing enclosed comma strings
+                let fields = [];
+                let match;
+                let regex = /"([^"]*)"|([^,]+)/g;
+                
+                while ((match = regex.exec(line)) !== null) {
+                    fields.push(match[1] !== undefined ? match[1].trim() : match[2].trim());
+                }
+
                 let obj = {};
-                headers.forEach((h, idx) => { obj[h] = isNaN(fields[idx]) ? fields[idx] : parseFloat(fields[idx]); });
+                headers.forEach((h, idx) => { 
+                    let val = fields[idx];
+                    if (val === undefined) val = "";
+                    // Un-quote strings and translate numeric elements natively
+                    obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
+                });
                 return patchMissingMetrics(obj);
             });
         }
 
         function generateDatabaseFromRosterContext() {
-            // High fidelity official tournament extraction layout mapped right from your document sheets
             const rawRoster = [
                 { Player: "Rayan Aït-Nouri", Nation: "ALG", Position: "DF", Age: 25, Height: 180, Club: "Manchester City FC" },
                 { Player: "Houssem Aouar", Nation: "ALG", Position: "MF", Age: 27, Height: 175, Club: "Al Ittihad" },
@@ -382,10 +399,8 @@
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
-            // 1. FILTER POOL FOR THE INTERACTIVE DROPDOWNS (role-bounded)
+            // 1. FILTER INTERACTIVE DROPDOWNS BY ACTIVE SPECIFICATIONS
             let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
-            
-            // Apply national subset filters if explicitly designated by select filters
             if (nation !== 'all') dropdownList = dropdownList.filter(p => p.Nation === nation);
 
             const sS = document.getElementById('selSinglePlayer');
@@ -405,7 +420,7 @@
             sA.value = dropdownList.some(p => p.Player === prevA) ? prevA : dropdownList[0]?.Player || '';
             sB.value = dropdownList.some(p => p.Player === prevB) ? prevB : (dropdownList[1] ? dropdownList[1].Player : dropdownList[0]?.Player || '');
 
-            // 2. LEADERBOARD CALCULATIONS
+            // 2. RUN LEADERBOARD CALCULATIONS
             let activeDataset = WORLD_CUP_DATABASE.map(p => {
                 let fitScore = computeOverallRoleScore(p, role);
                 return { ...p, fitScore: parseInt(fitScore) };
@@ -422,7 +437,6 @@
             renderComparisonCards();
         }
 
-        // NEW COMPONENT: RENDER SINGLE CARD FEED WORKSPACE
         function renderSingleCardLayout() {
             const role = document.getElementById('roleSelector').value;
             const p = WORLD_CUP_DATABASE.find(player => player.Player === document.getElementById('selSinglePlayer').value);
