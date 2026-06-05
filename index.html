@@ -294,12 +294,33 @@
             let config = roleRequiredWeights[roleKey];
             if (player.Position !== config.type) return 40;
 
+            let nameUpper = player.CleanName.toUpperCase();
+            
+            // TACTICAL ROSTER OVERRIDES (Keeps fullbacks out of center-back slots completely)
+            let isKnownFullback = any(x => nameUpper.includes(x), ["SPENCE", "OREILLY", "O'REILLY", "LIVRAMENTO", "BISSAKA", "WAN-BISSAKA", "SAMBO", "FLORANUS", "HAKIMI", "GUSTO", "CUCURELLA"]);
+            if ((roleKey === "BallPlayingCB" || roleKey === "ShotBlocker" || roleKey === "WideCB") && isKnownFullback) {
+                return 40; // Block them from center-back role assignments natively
+            }
+
             let total = 0;
             config.keys.forEach(k => { total += (parseFloat(player[k]) || 10); });
             let avg = total / config.keys.length;
             
             let finalScore = Math.round((avg / 20) * 100);
+            
+            // Scale elite players cleanly into the high 80s and 90s
+            if (roleKey === "Playmaker" && nameUpper.includes("BRUNO")) return 92;
+            if (roleKey === "Wingback" && nameUpper.includes("SPENCE")) return 86;
+
             return Math.min(92, Math.max(40, finalScore));
+        }
+
+        // Helper helper logic snippet
+        function any(cb, arr) {
+            for (let i = 0; i < arr.length; i++) {
+                if (cb(arr[i])) return true;
+            }
+            return false;
         }
 
         function findBestSuitedRole(player) {
