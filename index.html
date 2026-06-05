@@ -66,55 +66,68 @@
         }
         .bio-strip span strong { color: white; font-weight: 600; }
 
-        .matrix-row-card {
-            background: var(--bg-surface); border: 1px solid var(--border-muted);
-            border-radius: 6px; padding: 8px 12px; margin-bottom: 5px;
+        /* FM 3-Column Attribute Grid Block */
+        .fm-matrix-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .fm-matrix-wrapper { grid-template-columns: 1fr; gap: 16px; }
+        }
+
+        .fm-column {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-muted);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .fm-column-title {
+            font-size: 12px; font-weight: 800; color: var(--neon-blue);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 10px; border-bottom: 1px solid var(--border-muted);
+            padding-bottom: 6px;
+        }
+
+        .fm-row {
             display: flex; justify-content: space-between; align-items: center;
+            padding: 5px 4px; border-radius: 4px; font-size: 13px; margin-bottom: 2px;
         }
-        .val-box { width: 25%; font-size: 13px; font-weight: 600; }
-        .val-box.left { text-align: left; }
-        .val-box.right { text-align: right; }
-        .val-box.center { text-align: center; width: 35%; }
-        .metric-label { width: 50%; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
-        .metric-label.single-view { width: 65%; text-align: left; }
-
-        .scout-badge {
-            display: inline-block; padding: 2px 6px; font-weight: 700;
-            border-radius: 4px; font-size: 11px; min-width: 36px; text-align: center;
-        }
-        .tier-elite { background: rgba(5,255,161,0.1); color: var(--emerald-green); border: 1px solid rgba(5,255,161,0.25); }
-        .tier-good { background: rgba(0,210,255,0.1); color: var(--neon-blue); border: 1px solid rgba(0,210,255,0.25); }
-        .tier-avg { background: rgba(255,184,0,0.1); color: var(--amber-gold); border: 1px solid rgba(255,184,0,0.25); }
-
-        .tab-bar { display: flex; gap: 12px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
-        .tab-bar::-webkit-scrollbar { display: none; }
-        .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; padding: 8px 4px; cursor: pointer; flex-shrink: 0; }
-        .tab-btn.active { color: var(--neon-blue); border-bottom: 2px solid var(--neon-blue); }
+        .fm-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .fm-label { color: var(--text-main); font-weight: 500; }
+        .fm-label.highlighted { color: var(--emerald-green); font-weight: 700; }
         
-        .list-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-muted);
-            border-radius: 8px; margin-bottom: 6px;
+        .fm-value {
+            font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 12px; min-width: 16px; text-align: center;
         }
+        .v-high { background: rgba(5,255,161,0.15); color: var(--emerald-green); }
+        .v-med { background: rgba(0,210,255,0.15); color: var(--neon-blue); }
+        .v-low { background: rgba(126,141,168,0.1); color: var(--text-muted); }
+
+        .tab-bar { display: flex; gap: 12px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; overflow-x: auto; white-space: nowrap; }
+        .tab-bar::-webkit-scrollbar { display: none; }
+        .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; padding: 8px 4px; cursor: pointer; }
+        .tab-btn.active { color: var(--neon-blue); border-bottom: 2px solid var(--neon-blue); }
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-muted); border-radius: 8px; margin-bottom: 6px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <h1>ProScout <span class="accent-txt">2026</span></h1>
-    <div class="subtitle">FBref Real-World Tournament Matrix</div>
+    <div class="subtitle">Football Manager Dynamic Engine Registry</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament database... (e.g. Mbappe, Bellingham, Messi)">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search world attribute grid... (e.g. Lammens, Messi, Mbappe)">
         <div class="filter-grid">
             <div>
                 <select id="roleSelector">
-                    <optgroup label="Forwards (FW)">
-                        <option value="TargetMan">Clinical No.9</option>
-                        <option value="InsideForward">Inside Forward</option>
-                        <option value="Winger">Winger</option>
-                        <option value="PressingForward">Pressing Forward</option>
-                        <option value="False9">False 9</option>
+                    <optgroup label="Defenders (DF)">
+                        <option value="BallPlayingCB">Ball-Playing CB</option>
+                        <option value="ShotBlocker">Stopper</option>
+                        <option value="Wingback">Wingback</option>
+                        <option value="WideCB">Wide Centre Back</option>
                     </optgroup>
                     <optgroup label="Midfielders (MF)">
                         <option value="DLP">Deep Progressor</option>
@@ -122,11 +135,12 @@
                         <option value="BoxToBox">Box-to-Box Engine</option>
                         <option value="Playmaker">Playmaker</option>
                     </optgroup>
-                    <optgroup label="Defenders (DF)">
-                        <option value="BallPlayingCB">Ball-Playing CB</option>
-                        <option value="ShotBlocker">Stopper</option>
-                        <option value="Wingback">Wingback</option>
-                        <option value="WideCB">Wide Centre Back</option>
+                    <optgroup label="Forwards (FW)">
+                        <option value="TargetMan">Clinical No.9</option>
+                        <option value="InsideForward">Inside Forward</option>
+                        <option value="Winger">Winger</option>
+                        <option value="PressingForward">Pressing Forward</option>
+                        <option value="False9">False 9</option>
                     </optgroup>
                     <optgroup label="Goalkeepers (GK)">
                         <option value="ShotStopper">Traditional Shot Stopper</option>
@@ -191,10 +205,9 @@
     </div>
 
     <div class="tab-bar">
-        <button class="tab-btn active" id="tabSingle" onclick="switchView('single')">Single Profile</button>
-        <button class="tab-btn" id="tabH2h" onclick="switchView('h2h')">H2H Comparison</button>
+        <button class="tab-btn active" id="tabSingle" onclick="switchView('single')">Attribute Profile</button>
         <button class="tab-btn" id="tabList" onclick="switchView('list')">Role Rankings</button>
-        <button class="tab-btn" id="tabRoster" onclick="switchView('roster')">Complete Database</button>
+        <button class="tab-btn" id="tabRoster" onclick="switchView('roster')">Complete Registry</button>
     </div>
 
     <div id="viewSingle">
@@ -213,39 +226,8 @@
                 <div class="bio-strip" id="sBio"></div>
             </div>
         </div>
-        <h3>Analytical Performance Profile</h3>
-        <div id="singleMatrixAnchor"></div>
-    </div>
-
-    <div id="viewH2h" class="hidden">
-        <div class="filter-grid" style="margin-bottom: 12px;">
-            <div><select id="selPlayerA"></select></div>
-            <div><select id="selPlayerB"></select></div>
-        </div>
-        <div class="profile-deck">
-            <div class="scout-card">
-                <div class="card-header-block">
-                    <div>
-                        <div class="p-name" id="nameA">-</div>
-                        <div class="p-club" id="clubA">-</div>
-                    </div>
-                    <div class="rating-pct" id="scoreA">0%</div>
-                </div>
-                <div class="bio-strip" id="bioA"></div>
-            </div>
-            <div class="scout-card">
-                <div class="card-header-block">
-                    <div>
-                        <div class="p-name" id="nameB">-</div>
-                        <div class="p-club" id="clubB">-</div>
-                    </div>
-                    <div class="rating-pct" id="scoreB">0%</div>
-                </div>
-                <div class="bio-strip" id="bioB"></div>
-            </div>
-        </div>
-        <h3>Scouting Attribute Comparison</h3>
-        <div id="matrixAnchor"></div>
+        <h3>Scout Report Attributes</h3>
+        <div class="fm-matrix-wrapper" id="fmMatrixContainer"></div>
     </div>
 
     <div id="viewList" class="hidden">
@@ -259,361 +241,165 @@
     <script>
         let WORLD_CUP_DATABASE = [];
 
-        const scoutingAttributes = [
-            "xG_per90", "Shots_per90", "ShotsOnTarget_pct", "Goals_per_Shot",
-            "PassesAttempted_per90", "PassesCompleted_pct", "ProgressivePasses_per90", "KeyPasses_per90", "Crosses_per90",
-            "DribblesCompleted_per90", "DribbleSuccess_pct", "TouchesInBox_per90", "ProgressiveCarries_per90",
-            "TacklesWon_per90", "Interceptions_per90", "Blocks_per90", "Clearances_per90",
-            "AerialDuelsWon_per90", "AerialWin_pct"
-        ];
-
-        const gkLabelOverrides = {
-            "xG_per90": "PSxG+/- (Shot Stopping Margin)",
-            "PassesAttempted_per90": "Launched Distribution Rate",
-            "PassesCompleted_pct": "Distribution Completion %",
-            "Crosses_per90": "Crosses Claimed / Intercepted",
-            "Clearances_per90": "Sweeper Actions / Claims"
-        };
-
-        const profileWeightingMatrices = {
-            "TargetMan": { 
-                type: "FW", label: "Clinical No.9", 
-                metrics: [
-                    { name: "xG_per90", target: 0.54, weight: 0.20 },
-                    { name: "Shots_per90", target: 3.5, weight: 0.15 },
-                    { name: "ShotsOnTarget_pct", target: 46.0, weight: 0.15 },
-                    { name: "Goals_per_Shot", target: 0.16, weight: 0.15 },
-                    { name: "TouchesInBox_per90", target: 5.0, weight: 0.15 },
-                    { name: "AerialDuelsWon_per90", target: 1.8, weight: 0.20 }
-                ] 
-            },
-            "InsideForward": { 
-                type: "FW", label: "Inside Forward", 
-                metrics: [
-                    { name: "xG_per90", target: 0.38, weight: 0.25 },
-                    { name: "Shots_per90", target: 2.8, weight: 0.20 },
-                    { name: "DribblesCompleted_per90", target: 2.0, weight: 0.15 },
-                    { name: "TouchesInBox_per90", target: 4.8, weight: 0.15 },
-                    { name: "ProgressiveCarries_per90", target: 3.8, weight: 0.15 },
-                    { name: "KeyPasses_per90", target: 1.2, weight: 0.10 }
-                ] 
-            },
-            "Winger": {
-                type: "FW", label: "Winger",
-                metrics: [
-                    { name: "Crosses_per90", target: 3.2, weight: 0.30 },
-                    { name: "DribblesCompleted_per90", target: 2.4, weight: 0.20 },
-                    { name: "ProgressiveCarries_per90", target: 4.5, weight: 0.20 },
-                    { name: "KeyPasses_per90", target: 1.8, weight: 0.15 },
-                    { name: "DribbleSuccess_pct", target: 52.0, weight: 0.15 }
-                ]
-            },
-            "PressingForward": { 
-                type: "FW", label: "Pressing Forward", 
-                metrics: [
-                    { name: "TacklesWon_per90", target: 1.1, weight: 0.20 },
-                    { name: "Interceptions_per90", target: 0.4, weight: 0.15 },
-                    { name: "Blocks_per90", target: 0.7, weight: 0.15 },
-                    { name: "Shots_per90", target: 3.0, weight: 0.15 },
-                    { name: "TouchesInBox_per90", target: 4.5, weight: 0.15 },
-                    { name: "xG_per90", target: 0.42, weight: 0.20 }
-                ] 
-            },
-            "False9": {
-                type: "FW", label: "False 9",
-                metrics: [
-                    { name: "KeyPasses_per90", target: 1.8, weight: 0.25 },
-                    { name: "ProgressivePasses_per90", target: 3.5, weight: 0.20 },
-                    { name: "TouchesInBox_per90", target: 4.0, weight: 0.15 },
-                    { name: "DribblesCompleted_per90", target: 1.5, weight: 0.15 },
-                    { name: "xG_per90", target: 0.32, weight: 0.15 },
-                    { name: "PassesCompleted_pct", target: 76.0, weight: 0.10 }
-                ]
-            },
-            "DLP": { 
-                type: "MF", label: "Deep Progressor", 
-                metrics: [
-                    { name: "PassesAttempted_per90", target: 64.0, weight: 0.20 },
-                    { name: "PassesCompleted_pct", target: 89.0, weight: 0.20 },
-                    { name: "ProgressivePasses_per90", target: 6.2, weight: 0.15 },
-                    { name: "KeyPasses_per90", target: 1.8, weight: 0.15 },
-                    { name: "ProgressiveCarries_per90", target: 2.8, weight: 0.10 },
-                    { name: "DribbleSuccess_pct", target: 60.0, weight: 0.10 },
-                    { name: "Interceptions_per90", target: 1.2, weight: 0.10 }
-                ] 
-            },
-            "BallWinner": { 
-                type: "MF", label: "Destroyer", 
-                metrics: [
-                    { name: "TacklesWon_per90", target: 2.5, weight: 0.25 },
-                    { name: "Interceptions_per90", target: 1.6, weight: 0.20 },
-                    { name: "Blocks_per90", target: 1.6, weight: 0.20 },
-                    { name: "Clearances_per90", target: 1.4, weight: 0.15 },
-                    { name: "PassesAttempted_per90", target: 45.0, weight: 0.10 },
-                    { name: "PassesCompleted_pct", target: 80.0, weight: 0.10 }
-                ] 
-            },
-            "BoxToBox": { 
-                type: "MF", label: "Box-to-Box Engine", 
-                metrics: [
-                    { name: "ProgressiveCarries_per90", target: 3.5, weight: 0.15 },
-                    { name: "TouchesInBox_per90", target: 2.0, weight: 0.15 },
-                    { name: "TacklesWon_per90", target: 2.2, weight: 0.15 },
-                    { name: "KeyPasses_per90", target: 1.4, weight: 0.15 },
-                    { name: "PassesAttempted_per90", target: 54.0, weight: 0.15 },
-                    { name: "PassesCompleted_pct", target: 85.0, weight: 0.15 },
-                    { name: "xG_per90", target: 0.15, weight: 0.10 }
-                ] 
-            },
-            "Playmaker": {
-                type: "MF", label: "Playmaker",
-                metrics: [
-                    { name: "KeyPasses_per90", target: 2.2, weight: 0.30 },
-                    { name: "ProgressivePasses_per90", target: 5.0, weight: 0.20 },
-                    { name: "TouchesInBox_per90", target: 2.8, weight: 0.15 },
-                    { name: "DribblesCompleted_per90", target: 1.6, weight: 0.15 },
-                    { name: "Shots_per90", target: 2.0, weight: 0.10 },
-                    { name: "xG_per90", target: 0.20, weight: 0.10 }
-                ]
-            },
-            "BallPlayingCB": { 
-                type: "DF", label: "Ball-Playing CB", 
-                metrics: [
-                    { name: "PassesAttempted_per90", target: 60.0, weight: 0.20 },
-                    { name: "PassesCompleted_pct", target: 90.0, weight: 0.20 },
-                    { name: "ProgressivePasses_per90", target: 4.0, weight: 0.15 },
-                    { name: "Clearances_per90", target: 3.5, weight: 0.15 },
-                    { name: "AerialWin_pct", target: 62.0, weight: 0.10 },
-                    { name: "Interceptions_per90", target: 1.3, weight: 0.10 },
-                    { name: "Blocks_per90", target: 0.8, weight: 0.10 }
-                ] 
-            },
-            "ShotBlocker": { 
-                type: "DF", label: "Stopper", 
-                metrics: [
-                    { name: "Clearances_per90", target: 5.0, weight: 0.25 },
-                    { name: "Blocks_per90", target: 1.5, weight: 0.20 },
-                    { name: "TacklesWon_per90", target: 2.0, weight: 0.15 },
-                    { name: "Interceptions_per90", target: 1.5, weight: 0.15 },
-                    { name: "AerialDuelsWon_per90", target: 2.4, weight: 0.15 },
-                    { name: "AerialWin_pct", target: 64.0, weight: 0.10 }
-                ] 
-            },
-            "Wingback": { 
-                type: "DF", label: "WINGBACK", 
-                metrics: [
-                    { name: "Crosses_per90", target: 3.2, weight: 0.20 },
-                    { name: "DribblesCompleted_per90", target: 1.5, weight: 0.15 },
-                    { name: "ProgressiveCarries_per90", target: 3.5, weight: 0.15 },
-                    { name: "KeyPasses_per90", target: 1.2, weight: 0.15 },
-                    { name: "PassesAttempted_per90", target: 46.0, weight: 0.15 },
-                    { name: "TouchesInBox_per90", target: 1.2, weight: 0.10 },
-                    { name: "TacklesWon_per90", target: 1.5, weight: 0.10 }
-                ] 
-            },
-            "WideCB": {
-                type: "DF", label: "Wide Centre Back",
-                metrics: [
-                    { name: "TacklesWon_per90", target: 1.8, weight: 0.20 },
-                    { name: "Interceptions_per90", target: 1.4, weight: 0.20 },
-                    { name: "ProgressivePasses_per90", target: 3.2, weight: 0.15 },
-                    { name: "ProgressiveCarries_per90", target: 2.0, weight: 0.15 },
-                    { name: "Clearances_per90", target: 3.8, weight: 0.15 },
-                    { name: "AerialDuelsWon_per90", target: 1.6, weight: 0.15 }
-                ]
-            },
-            "ShotStopper": { 
-                type: "GK", label: "Traditional Shot Stopper", 
-                metrics: [
-                    { name: "xG_per90", target: 0.40, weight: 0.40 },
-                    { name: "PassesCompleted_pct", target: 74.0, weight: 0.15 },
-                    { name: "AerialDuelsWon_per90", target: 1.4, weight: 0.15 },
-                    { name: "Clearances_per90", target: 0.6, weight: 0.15 },
-                    { name: "AerialWin_pct", target: 80.0, weight: 0.15 }
-                ] 
-            },
-            "SweeperKeeper": { 
-                type: "GK", label: "Sweeper Keeper", 
-                metrics: [
-                    { name: "Clearances_per90", target: 1.4, weight: 0.35 },
-                    { name: "PassesAttempted_per90", target: 34.0, weight: 0.20 },
-                    { name: "PassesCompleted_pct", target: 84.0, weight: 0.20 },
-                    { name: "xG_per90", target: 0.25, weight: 0.15 },
-                    { name: "ProgressivePasses_per90", target: 1.5, weight: 0.10 }
-                ] 
-            }
+        // Dynamic FM Mapping Weights representing required indicators
+        const roleRequiredWeights = {
+            "BallPlayingCB": { type: "DF", label: "Ball-Playing CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
+            "ShotBlocker": { type: "DF", label: "Stopper", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
+            "Wingback": { type: "DF", label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
+            "WideCB": { type: "DF", label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
+            "DLP": { type: "MF", label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
+            "BallWinner": { type: "MF", label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
+            "BoxToBox": { type: "MF", label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
+            "Playmaker": { type: "MF", label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
+            "TargetMan": { type: "FW", label: "Clinical No.9", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
+            "InsideForward": { type: "FW", label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
+            "Winger": { type: "FW", label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
+            "PressingForward": { type: "FW", label: "Pressing Forward", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
+            "False9": { type: "FW", label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
+            "ShotStopper": { type: "GK", label: "Traditional Shot Stopper", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
+            "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", keys: ["Refweres", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
         };
 
         async function loadTournamentDatabase() {
             try {
                 const response = await fetch('world_cup_2026_master.csv?t=' + Date.now());
-                if (!response.ok) throw new Error("File empty");
                 const csvText = await response.text();
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 runDataPipeline();
             } catch (error) {
-                console.log("Database load failed", error);
+                console.log("Database failed to load configuration lines", error);
             }
         }
 
         function parseCSVEngine(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length < 2) return [];
-            
             const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
             
             return lines.slice(1).map(line => {
-                let fields = [];
-                let match;
+                let fields = []; let match;
                 let regex = /"([^"]*)"|([^,]+)/g;
-                
-                while ((match = regex.exec(line)) !== null) {
-                    fields.push(match[1] !== undefined ? match[1].trim() : match[2].trim());
-                }
-
+                while ((match = regex.exec(line)) !== null) { fields.push(match[1] !== undefined ? match[1].trim() : match[2].trim()); }
                 let obj = {};
                 headers.forEach((h, idx) => { 
                     let val = fields[idx];
-                    if (val === undefined) val = "";
                     obj[h] = (val !== "" && !isNaN(val)) ? parseFloat(val) : val; 
                 });
-                
-                obj.CleanName = String(obj.Player || "").replace(/\x00/g, '').trim();
-                obj.Club = String(obj.Club || "International FA").replace(/\x00/g, '').trim();
-                
+                obj.CleanName = String(obj.Player || "").trim();
                 return obj;
             });
         }
 
         function computeOverallRoleScore(player, roleKey) {
-            let roleProfile = profileWeightingMatrices[roleKey];
-            if (!roleProfile) return 40;
+            let config = roleRequiredWeights[roleKey];
+            if (player.Position !== config.type) return 40;
 
-            // 1. DYNAMIC POSITION RE-ASSIGNMENT ENGINE
-            // Dynamically breaks open the rigid CSV categories into real-world tactical profiles
-            let effectivePosition = player.Position;
+            let total = 0;
+            config.keys.forEach(k => { total += (parseFloat(player[k]) || 10); });
+            let avg = total / config.keys.length;
             
-            let heightNum = parseInt(player.Height) || 180;
-            let clearNum = parseFloat(player.Clearances_per90) || 0;
-            let crossNum = parseFloat(player.Crosses_per90) || 0;
-            let dribblesNum = parseFloat(player.DribblesCompleted_per90) || 0;
-            let progressivePassNum = parseFloat(player.ProgressivePasses_per90) || 0;
-            let carryNum = parseFloat(player.ProgressiveCarries_per90) || 0;
-            let shotsNum = parseFloat(player.Shots_per90) || 0;
-            let keyPassNum = parseFloat(player.KeyPasses_per90) || 0;
-            let xgNum = parseFloat(player.xG_per90) || 0;
-
-            // Re-route natural Fullbacks/Wingbacks who are trapped in the "DF" category
-            if (player.Position === "DF") {
-                if (crossNum >= 0.25 || (carryNum >= 1.4 && heightNum < 185)) {
-                    effectivePosition = "WINGBACK_PROFILE";
-                } else if (heightNum >= 180 && heightNum <= 192 && carryNum >= 1.0 && clearNum < 4.3) {
-                    effectivePosition = "WIDECB_PROFILE";
-                }
-            }
-
-            // Re-route creative Midfielders who excel at final-third chance creation
-            if (player.Position === "MF") {
-                if (keyPassNum >= 1.2 && progressivePassNum >= 3.8) {
-                    effectivePosition = "PLAYMAKER_PROFILE";
-                }
-            }
-
-            // Re-route structural, touchline-hugging wingers trapped in the "FW" category
-            if (player.Position === "FW") {
-                if (crossNum >= 0.35 && shotsNum < 2.5) {
-                    effectivePosition = "WINGER_PROFILE";
-                } else if (keyPassNum >= 1.1 && progressivePassNum >= 2.2 && heightNum < 186) {
-                    effectivePosition = "FALSE9_PROFILE";
-                }
-            }
-
-            // 2. CHECK ROLE COMPATIBILITY PER PROFILE GROUP
-            if (roleKey === "Wingback" && effectivePosition !== "WINGBACK_PROFILE") return 40;
-            if (roleKey === "WideCB" && effectivePosition !== "WIDECB_PROFILE" && effectivePosition !== "WINGBACK_PROFILE") return 40;
-            if (roleKey === "Playmaker" && effectivePosition !== "PLAYMAKER_PROFILE") return 40;
-            if (roleKey === "Winger" && effectivePosition !== "WINGER_PROFILE") return 40;
-            if (roleKey === "InsideForward" && effectivePosition === "WINGER_PROFILE") return 40;
-            if (roleKey === "False9" && effectivePosition !== "FALSE9_PROFILE") return 40;
-
-            // Prevent wingbacks and playmakers from overflowing standard center-back or striker roles
-            if ((roleKey === "BallPlayingCB" || roleKey === "ShotBlocker") && effectivePosition === "WINGBACK_PROFILE") return 40;
-            if ((roleKey === "TargetMan" || roleKey === "PressingForward") && effectivePosition === "FALSE9_PROFILE") return 40;
-
-            // Fallback for native, un-adjusted structural lines
-            if (!effectivePosition.includes("_PROFILE") && player.Position !== roleProfile.type) return 40;
-
-            // 3. CORE RATIO WEIGHTING CALCULATION
-            let totalWeightedScore = 0;
-            let activeMetrics = roleProfile.metrics;
-            
-            // Fallback metrics mapping if a custom group alignment bypass occurs
-            if (roleKey === "Winger") activeMetrics = profileWeightingMatrices["InsideForward"].metrics;
-
-            activeMetrics.forEach(m => {
-                let actualVal = parseFloat(player[m.name]) || 0;
-                let ratio = actualVal / m.target;
-                if (ratio > 1.15) ratio = 1.15;
-                if (ratio < 0.2) ratio = 0.2;
-                totalWeightedScore += (ratio * m.weight);
-            });
-
-            let scoreProduct = totalWeightedScore * 100;
-
-            // 4. BALANCED PROFILE ADJUSTMENTS (Applies globally to all 1248 players)
-            if (roleKey === "BallPlayingCB") {
-                if (heightNum < 184) scoreProduct -= 15;
-                if (clearNum < 3.2) scoreProduct -= 10;
-            }
-            if (roleKey === "ShotBlocker") {
-                if (heightNum < 186) scoreProduct -= 15;
-                if (clearNum < 4.2) scoreProduct -= 15;
-            }
-            if (roleKey === "Wingback") {
-                if (crossNum >= 0.4) scoreProduct += 10;
-                if (dribblesNum > 1.0) scoreProduct += 5;
-            }
-            if (roleKey === "WideCB") {
-                // Perfect hybrid balance (e.g. Dan Burn, Ezri Konsa, Luke Shaw)
-                if (heightNum >= 183 && heightNum <= 192) scoreProduct += 10;
-                if (clearNum >= 3.5) scoreProduct += 5;
-            }
-            if (roleKey === "Playmaker") {
-                if (keyPassNum >= 1.5) scoreProduct += 10;
-                if (xgNum > 0.20) scoreProduct -= 10; // Pushes high-scorers toward Inside Forward/False 9 instead
-            }
-            if (roleKey === "Winger") {
-                if (crossNum >= 0.4) scoreProduct += 12;
-                if (shotsNum >= 2.5) scoreProduct -= 15; // Wingers cross, Inside Forwards shoot
-            }
-            if (roleKey === "InsideForward") {
-                if (shotsNum >= 2.5) scoreProduct += 10;
-                if (crossNum > 0.4) scoreProduct -= 12;
-            }
-            if (roleKey === "False9") {
-                if (keyPassNum >= 1.2) scoreProduct += 10;
-            }
-
-            let finalScore = Math.round(scoreProduct);
-            if (finalScore > 92) finalScore = 92;
-            if (finalScore < 40) finalScore = 40;
-
-            return finalScore;
+            let finalScore = Math.round((avg / 20) * 100);
+            return Math.min(92, Math.max(40, finalScore));
         }
+
         function findBestSuitedRole(player) {
             let highRole = ""; let maxScore = -1;
-            Object.keys(profileWeightingMatrices).forEach(rk => {
-                let roleProfile = profileWeightingMatrices[rk];
-                if (roleProfile.type === player.Position) {
-                    let currentScore = parseInt(computeOverallRoleScore(player, rk));
-                    if (currentScore > maxScore) { maxScore = currentScore; highRole = rk; }
+            Object.keys(roleRequiredWeights).forEach(rk => {
+                if (roleRequiredWeights[rk].type === player.Position) {
+                    let s = computeOverallRoleScore(player, rk);
+                    if (s > maxScore) { maxScore = s; highRole = rk; }
                 }
             });
-            return profileWeightingMatrices[highRole]?.label || "Generalist";
+            return roleRequiredWeights[highRole]?.label || "Generalist";
+        }
+
+        function runDataPipeline() {
+            if (WORLD_CUP_DATABASE.length === 0) return;
+            const role = document.getElementById('roleSelector').value;
+            const targetType = roleRequiredWeights[role].type;
+            const nation = document.getElementById('nationSelector').value;
+            const query = document.getElementById('playerSearch').value.toLowerCase();
+
+            let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
+            if (nation !== 'all') dropdownList = dropdownList.filter(p => p.Nation === nation);
+
+            const sS = document.getElementById('selSinglePlayer');
+            const prevS = sS.value; sS.innerHTML = '';
+
+            dropdownList.forEach(p => { sS.appendChild(new Option(`${p.CleanName} (${p.Position})`, p.Player)); });
+            sS.value = dropdownList.some(p => p.Player === prevS) ? prevS : dropdownList[0]?.Player || '';
+
+            let activeDataset = WORLD_CUP_DATABASE.map(p => { return { ...p, fitScore: computeOverallRoleScore(p, role) }; });
+            if (nation !== 'all') activeDataset = activeDataset.filter(p => p.Nation === nation);
+            if (query) activeDataset = activeDataset.filter(p => p.CleanName.toLowerCase().includes(query));
+
+            let rankingsSet = activeDataset.filter(p => p.Position === targetType).sort((a,b) => b.fitScore - a.fitScore);
+            renderRankingsLayout(rankingsSet);
+            renderRosterLayout(activeDataset);
+            renderSingleCardLayout();
+        }
+
+        function renderSingleCardLayout() {
+            const role = document.getElementById('roleSelector').value;
+            const p = WORLD_CUP_DATABASE.find(player => player.Player === document.getElementById('selSinglePlayer').value);
+            if (!p) return;
+
+            document.getElementById('sName').innerText = p.CleanName;
+            document.getElementById('sClub').innerText = p.Club || 'Unknown';
+            document.getElementById('sScore').innerText = `${computeOverallRoleScore(p, role)}%`;
+            document.getElementById('sBio').innerHTML = `
+                <span>Nation: <strong>${p.Nation || '-'}</strong></span>
+                <span>Pos Group: <strong>${p.Position || '-'}</strong></span>
+                <span>Age Group: <strong>${p.Age || '-'}</strong></span>
+                <span>Height Line: <strong>${p.Height || '-'} cm</strong></span>
+            `;
+
+            const container = document.getElementById('fmMatrixContainer');
+            container.innerHTML = '';
+            let activeWeights = roleRequiredWeights[role].keys;
+
+            let col1 = document.createElement('div'); col1.className = 'fm-column';
+            let col2 = document.createElement('div'); col2.className = 'fm-column';
+            let col3 = document.createElement('div'); col3.className = 'fm-column';
+
+            if (p.Position === "GK") {
+                col1.innerHTML = '<div class="fm-column-title">Goalkeeping</div>';
+                ["AerialReach", "CommandOfArea", "Communication", "Eccentricity", "Handling", "Kicking", "OneOnOnes", "PunchingTendency", "Reflexes", "RushingOutTendency", "Throwing"].forEach(a => appendFmRow(col1, a, p[a], activeWeights));
+                
+                col2.innerHTML = '<div class="fm-column-title">Mental</div>';
+                ["Aggression", "Anticipation", "Bravery", "Composure", "Concentration", "Decisions", "Determination", "Flair", "Leadership", "OffTheBall", "Positioning", "Teamwork", "Vision", "Work Rate"].forEach(a => appendFmRow(col2, a, p[a], activeWeights));
+                
+                col3.innerHTML = '<div class="fm-column-title">Physical & Tech</div>';
+                ["Acceleration", "Agility", "Balance", "JumpingReach", "NaturalFitness", "Pace", "Stamina", "Strength", "FirstTouch", "Passing", "Technique"].forEach(a => appendFmRow(col3, a, p[a], activeWeights));
+            } else {
+                col1.innerHTML = '<div class="fm-column-title">Technical</div>';
+                ["Crossing", "Dribbling", "Finishing", "FirstTouch", "Heading", "LongShots", "Marking", "Passing", "Tackling", "Technique", "Corners", "FreeKickTaking", "LongThrows", "PenaltyTaking"].forEach(a => appendFmRow(col1, a, p[a], activeWeights));
+                
+                col2.innerHTML = '<div class="fm-column-title">Mental</div>';
+                ["Aggression", "Anticipation", "Bravery", "Composure", "Concentration", "Decisions", "Determination", "Flair", "Leadership", "OffTheBall", "Positioning", "Teamwork", "Vision", "Work Rate"].forEach(a => appendFmRow(col2, a, p[a], activeWeights));
+                
+                col3.innerHTML = '<div class="fm-column-title">Physical</div>';
+                ["Acceleration", "Agility", "Balance", "JumpingReach", "NaturalFitness", "Pace", "Stamina", "Strength"].forEach(a => appendFmRow(col3, a, p[a], activeWeights));
+            }
+
+            container.appendChild(col1); container.appendChild(col2); container.appendChild(col3);
+        }
+
+        function appendFmRow(parent, label, val, highlights) {
+            let div = document.createElement('div'); div.className = 'fm-row';
+            let v = parseInt(val) || 10;
+            let cClass = v >= 15 ? 'v-high' : (v >= 11 ? 'v-med' : 'v-low');
+            let isH = highlights.includes(label) ? 'highlighted' : '';
+            
+            div.innerHTML = `
+                <span class="fm-label ${isH}">${label.replace(/([A-Z])/g, ' $1').trim()}</span>
+                <span class="fm-value ${cClass}">${v}</span>
+            `;
+            parent.appendChild(div);
         }
 
         function switchView(target) {
-            ['single', 'h2h', 'list', 'roster'].forEach(t => {
+            ['single', 'list', 'roster'].forEach(t => {
                 document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === target);
                 document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('hidden', t !== target);
             });
@@ -623,183 +409,22 @@
         document.getElementById('nationSelector').addEventListener('change', runDataPipeline);
         document.getElementById('playerSearch').addEventListener('input', runDataPipeline);
         document.getElementById('selSinglePlayer').addEventListener('change', renderSingleCardLayout);
-        document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
-        document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
-
-        function runDataPipeline() {
-            if (WORLD_CUP_DATABASE.length === 0) return;
-
-            const role = document.getElementById('roleSelector').value;
-            const targetType = profileWeightingMatrices[role].type;
-            const nation = document.getElementById('nationSelector').value;
-            const query = document.getElementById('playerSearch').value.toLowerCase();
-
-            let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
-            if (nation !== 'all') dropdownList = dropdownList.filter(p => p.Nation === nation);
-
-            const sS = document.getElementById('selSinglePlayer');
-            const sA = document.getElementById('selPlayerA');
-            const sB = document.getElementById('selPlayerB');
-            
-            const prevS = sS.value; const prevA = sA.value; const prevB = sB.value;
-            sS.innerHTML = ''; sA.innerHTML = ''; sB.innerHTML = '';
-
-            dropdownList.forEach(p => {
-                let textLabel = `${p.CleanName} (${p.Position})`;
-                sS.appendChild(new Option(textLabel, p.Player));
-                sA.appendChild(new Option(textLabel, p.Player));
-                sB.appendChild(new Option(textLabel, p.Player));
-            });
-
-            sS.value = dropdownList.some(p => p.Player === prevS) ? prevS : dropdownList[0]?.Player || '';
-            sA.value = dropdownList.some(p => p.Player === prevA) ? prevA : dropdownList[0]?.Player || '';
-            sB.value = dropdownList.some(p => p.Player === prevB) ? prevB : (dropdownList[1] ? dropdownList[1].Player : dropdownList[0]?.Player || '');
-
-            let activeDataset = WORLD_CUP_DATABASE.map(p => {
-                let fitScore = computeOverallRoleScore(p, role);
-                return { ...p, fitScore: parseInt(fitScore) };
-            });
-
-            if (nation !== 'all') activeDataset = activeDataset.filter(p => p.Nation === nation);
-            if (query) activeDataset = activeDataset.filter(p => p.Player.toLowerCase().includes(query) || p.CleanName.toLowerCase().includes(query));
-
-            let rankingsSet = activeDataset.filter(p => p.Position === targetType).sort((a,b) => b.fitScore - a.fitScore);
-
-            renderRankingsLayout(rankingsSet);
-            renderRosterLayout(activeDataset);
-            renderSingleCardLayout();
-            renderComparisonCards();
-        }
-
-        function renderSingleCardLayout() {
-            const role = document.getElementById('roleSelector').value;
-            const isGK = profileWeightingMatrices[role].type === "GK";
-            const p = WORLD_CUP_DATABASE.find(player => player.Player === document.getElementById('selSinglePlayer').value);
-            if (!p) return;
-
-            let score = computeOverallRoleScore(p, role);
-            document.getElementById('sName').innerText = `${p.CleanName} (${p.Position})`;
-            document.getElementById('sClub').innerText = p.Club || 'Unknown';
-            document.getElementById('sScore').innerText = `${score}%`;
-            document.getElementById('sBio').innerHTML = `
-                <span>Nation: <strong>${p.Nation || '-'}</strong></span>
-                <span>Position Group: <strong>${p.Position || '-'}</strong></span>
-                <span>Age Metric: <strong>${p.Age || '-'}</strong></span>
-                <span>Height Scale: <strong>${p.Height || '-'} cm</strong></span>
-            `;
-
-            const container = document.getElementById('singleMatrixAnchor');
-            container.innerHTML = '';
-            let coreMetrics = profileWeightingMatrices[role].metrics.map(m => m.name);
-
-            scoutingAttributes.forEach(attr => {
-                let val = p[attr] !== undefined ? p[attr] : 0;
-                let displayVal = attr.includes('pct') ? `${val}%` : val;
-                let isCore = coreMetrics.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
-                let printLabel = (isGK && gkLabelOverrides[attr]) ? gkLabelOverrides[attr] : attr.replace(/_/g, ' ');
-
-                let div = document.createElement('div');
-                div.className = 'matrix-row-card';
-                div.innerHTML = `
-                    <div class="metric-label single-view" ${isCore}>${printLabel}</div>
-                    <div class="val-box right" style="width:40%;"><span class="scout-badge ${getBadgeClass(attr, val)}">${displayVal}</span></div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderComparisonCards() {
-            const role = document.getElementById('roleSelector').value;
-            const isGK = profileWeightingMatrices[role].type === "GK";
-            const pA = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerA').value);
-            const pB = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerB').value);
-
-            if (!pA || !pB) return;
-
-            let scoreA = computeOverallRoleScore(pA, role);
-            let scoreB = computeOverallRoleScore(pB, role);
-
-            document.getElementById('nameA').innerText = `${pA.CleanName} (${pA.Position})`;
-            document.getElementById('clubA').innerText = pA.Club || 'Unknown';
-            document.getElementById('scoreA').innerText = `${scoreA}%`;
-            document.getElementById('bioA').innerHTML = `
-                <span>Nation: <strong>${pA.Nation || '-'}</strong></span>
-                <span>Pos: <strong>${pA.Position || '-'}</strong></span>
-                <span>Age: <strong>${pA.Age || '-'}</strong></span>
-                <span>Height: <strong>${pA.Height || '-'} cm</strong></span>
-            `;
-
-            document.getElementById('nameB').innerText = `${pB.CleanName} (${pB.Position})`;
-            document.getElementById('clubB').innerText = pB.Club || 'Unknown';
-            document.getElementById('scoreB').innerText = `${scoreB}%`;
-            document.getElementById('bioB').innerHTML = `
-                <span>Nation: <strong>${pB.Nation || '-'}</strong></span>
-                <span>Pos: <strong>${pB.Position || '-'}</strong></span>
-                <span>Age: <strong>${pB.Age || '-'}</strong></span>
-                <span>Height: <strong>${pB.Height || '-'} cm</strong></span>
-            `;
-
-            const container = document.getElementById('matrixAnchor');
-            container.innerHTML = '';
-            let coreMetrics = profileWeightingMatrices[role].metrics.map(m => m.name);
-
-            scoutingAttributes.forEach(attr => {
-                let vA = pA[attr] !== undefined ? pA[attr] : 0; 
-                let vB = pB[attr] !== undefined ? pB[attr] : 0;
-                let displayA = attr.includes('pct') ? `${vA}%` : vA;
-                let displayB = attr.includes('pct') ? `${vB}%` : vB;
-
-                let isCore = coreMetrics.includes(attr) ? 'style="color: var(--neon-blue); font-weight:800;"' : '';
-                let printLabel = (isGK && gkLabelOverrides[attr]) ? gkLabelOverrides[attr] : attr.replace(/_/g, ' ');
-
-                let div = document.createElement('div');
-                div.className = 'matrix-row-card';
-                div.innerHTML = `
-                    <div class="val-box left"><span class="scout-badge ${getBadgeClass(attr, vA)}">${displayA}</span></div>
-                    <div class="metric-label" ${isCore}>${printLabel}</div>
-                    <div class="val-box right"><span class="scout-badge ${getBadgeClass(attr, vB)}">${displayB}</span></div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function getBadgeClass(attr, v) {
-            let threshold = attr.includes('pct') ? 78 : 2.0;
-            if (attr === 'xG_per90') threshold = 0.50;
-            return v >= threshold ? 'tier-elite' : (v >= (threshold / 2) ? 'tier-good' : 'tier-avg');
-        }
 
         function renderRankingsLayout(list) {
             const anchor = document.getElementById('rankingsAnchor');
-            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matching role profiles located.</div>' : '';
+            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matches found.</div>' : '';
             list.forEach((p, idx) => {
-                let div = document.createElement('div');
-                div.className = 'list-row';
-                div.innerHTML = `
-                    <div>
-                        <div style="font-weight:700; font-size:14px; color:white;">#${idx+1} ${p.CleanName} (${p.Position})</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club} — ${p.Nation || '-'}</div>
-                    </div>
-                    <div style="font-weight:800; color:var(--emerald-green); font-size:14px;">${p.fitScore}% Match</div>
-                `;
+                let div = document.createElement('div'); div.className = 'list-row';
+                div.innerHTML = `<div><div style="font-weight:700; color:white;">#${idx+1} ${p.CleanName}</div><div style="font-size:11px; color:var(--text-muted);">${p.Club} — ${p.Nation}</div></div><div style="font-weight:800; color:var(--emerald-green);">${p.fitScore}% Match</div>`;
                 anchor.appendChild(div);
             });
         }
 
         function renderRosterLayout(list) {
-            const anchor = document.getElementById('rosterAnchor');
-            anchor.innerHTML = '';
+            const anchor = document.getElementById('rosterAnchor'); anchor.innerHTML = '';
             list.forEach(p => {
-                let bestRole = findBestSuitedRole(p);
-                let div = document.createElement('div');
-                div.className = 'list-row';
-                div.innerHTML = `
-                    <div>
-                        <div style="font-weight:700; font-size:14px; color:white;">${p.CleanName} (${p.Position || '-'})</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${p.Club} — Nation: ${p.Nation || '-'} — Age: ${p.Age || '-'}</div>
-                    </div>
-                    <div style="font-weight:600; color:var(--neon-blue); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Best Suit: ${bestRole}</div>
-                `;
+                let div = document.createElement('div'); div.className = 'list-row';
+                div.innerHTML = `<div><div style="font-weight:700; color:white;">${p.CleanName} (${p.Position})</div><div style="font-size:11px; color:var(--text-muted);">${p.Club} — Age: ${p.Age}</div></div><div style="font-weight:600; color:var(--neon-blue); font-size:12px;">Best: ${findBestSuitedRole(p)}</div>`;
                 anchor.appendChild(div);
             });
         }
