@@ -463,20 +463,29 @@
             let heightNum = parseInt(player.Height) || 180;
             let clearNum = parseFloat(player.Clearances_per90) || 0;
             let crossNum = parseFloat(player.Crosses_per90) || 0;
+            let carriesNum = parseFloat(player.ProgressiveCarries_per90) || 0;
 
-            // Re-balanced positioning calibration metrics
+            // PRECISE TACTICAL CALIBRATION MATRICES
             if (roleKey === "BallPlayingCB") {
-                if (clearNum < 4.0) scoreProduct -= 12;
+                // Ball-playing CBs must satisfy core height and defensive clearance standards
+                if (clearNum < 3.8) scoreProduct -= 12;
                 if (heightNum < 184) scoreProduct -= 15;
             }
             
             if (roleKey === "ShotBlocker") {
                 if (heightNum < 186) scoreProduct -= 12;
+                if (clearNum < 4.2) scoreProduct -= 10;
             }
 
             if (roleKey === "Wingback") {
-                if (heightNum >= 186) scoreProduct -= 25; // Massive penalty for tall CBs playing full-back
-                if (crossNum >= 0.24) scoreProduct += 15;  // Reward active crossers
+                // EXPLICIT CENTER-BACK EXCLUSION FILTERS
+                // If they are tall like a CB, or simply do not cross/carry the ball wide, crush the suitability score
+                if (heightNum >= 185) scoreProduct -= 35;
+                if (crossNum < 0.35) scoreProduct -= 30;
+                if (carriesNum < 1.5) scoreProduct -= 20;
+
+                // Reward standard-height fullbacks who active cross and carry efficiently
+                if (heightNum <= 182 && crossNum >= 0.4) scoreProduct += 12;
             }
 
             let finalScore = Math.round(scoreProduct);
