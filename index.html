@@ -486,46 +486,71 @@
         }
 
         function computeOverallRoleScore(player, roleKey) {
-            let nameCheck = player.CleanName.toUpperCase();
+            let roleProfile = profileWeightingMatrices[roleKey];
+            if (!roleProfile) return 40;
+
+            // 1. DYNAMIC POSITION RE-ASSIGNMENT ENGINE
+            // Dynamically breaks open the rigid CSV categories into real-world tactical profiles
+            let effectivePosition = player.Position;
             
-            // =================================================================
-            // GROUND-TRUTH EXPERT CALIBRATION ANCHORS
-            // Overrides uniform flat row metrics with precise real-world profiles
-            // =================================================================
-            if (player.Nation === "ENG") {
-                if (nameCheck.includes("PICKFORD") && roleKey === "SweeperKeeper") return 88;
-                if (nameCheck.includes("KONSA") && roleKey === "WideCB") return 86;
-                if (nameCheck.includes("OREILLY") && roleKey === "Wingback") return 89;
-                if (nameCheck.includes("RICE") && roleKey === "DLP") return 91;
-                if (nameCheck.includes("STONES") && roleKey === "BallPlayingCB") return 92;
-                if (nameCheck.includes("GUEHI") && roleKey === "ShotBlocker") return 88;
-                if (nameCheck.includes("SAKA") && roleKey === "InsideForward") return 92;
-                if (nameCheck.includes("ANDERSON") && roleKey === "BoxToBox") return 84;
-                if (nameCheck.includes("KANE") && roleKey === "TargetMan") return 92;
-                if (nameCheck.includes("BELLINGHAM") && roleKey === "Playmaker") return 92;
-                if (nameCheck.includes("RASHFORD") && roleKey === "InsideForward") return 88;
-                if (nameCheck.includes("LIVRAMENTO") && roleKey === "Wingback") return 87;
-                if (nameCheck.includes("DEAN HENDERSON") && roleKey === "SweeperKeeper") return 84;
-                if (nameCheck.includes("JORDAN HENDERSON") && roleKey === "BallWinner") return 82;
-                if (nameCheck.includes("DAN BURN") && roleKey === "WideCB") return 88;
-                if (nameCheck.includes("MAINOO") && roleKey === "BoxToBox") return 87;
-                if (nameCheck.includes("ROGERS") && roleKey === "Playmaker") return 85;
-                if (nameCheck.includes("GORDON") && roleKey === "Winger") return 89;
-                if (nameCheck.includes("WATKINS") && roleKey === "PressingForward") return 90;
-                if (nameCheck.includes("MADUEKE") && roleKey === "Winger") return 87;
-                if (nameCheck.includes("EZE") && roleKey === "Playmaker") return 89;
-                if (nameCheck.includes("TONEY") && roleKey === "TargetMan") return 89;
-                if (nameCheck.includes("TRAFFORD") && roleKey === "SweeperKeeper") return 83;
-                if (nameCheck.includes("REECE JAMES") && roleKey === "BallPlayingCB") return 88;
-                if (nameCheck.includes("SPENCE") && roleKey === "Wingback") return 85;
-                if (nameCheck.includes("QUANSAH") && roleKey === "BallPlayingCB") return 86;
+            let heightNum = parseInt(player.Height) || 180;
+            let clearNum = parseFloat(player.Clearances_per90) || 0;
+            let crossNum = parseFloat(player.Crosses_per90) || 0;
+            let dribblesNum = parseFloat(player.DribblesCompleted_per90) || 0;
+            let progressivePassNum = parseFloat(player.ProgressivePasses_per90) || 0;
+            let carryNum = parseFloat(player.ProgressiveCarries_per90) || 0;
+            let shotsNum = parseFloat(player.Shots_per90) || 0;
+            let keyPassNum = parseFloat(player.KeyPasses_per90) || 0;
+            let xgNum = parseFloat(player.xG_per90) || 0;
+
+            // Re-route natural Fullbacks/Wingbacks who are trapped in the "DF" category
+            if (player.Position === "DF") {
+                if (crossNum >= 0.25 || (carryNum >= 1.4 && heightNum < 185)) {
+                    effectivePosition = "WINGBACK_PROFILE";
+                } else if (heightNum >= 180 && heightNum <= 192 && carryNum >= 1.0 && clearNum < 4.3) {
+                    effectivePosition = "WIDECB_PROFILE";
+                }
             }
 
-            let roleProfile = profileWeightingMatrices[roleKey];
-            if (player.Position !== roleProfile.type) return 40; 
+            // Re-route creative Midfielders who excel at final-third chance creation
+            if (player.Position === "MF") {
+                if (keyPassNum >= 1.2 && progressivePassNum >= 3.8) {
+                    effectivePosition = "PLAYMAKER_PROFILE";
+                }
+            }
 
+            // Re-route structural, touchline-hugging wingers trapped in the "FW" category
+            if (player.Position === "FW") {
+                if (crossNum >= 0.35 && shotsNum < 2.5) {
+                    effectivePosition = "WINGER_PROFILE";
+                } else if (keyPassNum >= 1.1 && progressivePassNum >= 2.2 && heightNum < 186) {
+                    effectivePosition = "FALSE9_PROFILE";
+                }
+            }
+
+            // 2. CHECK ROLE COMPATIBILITY PER PROFILE GROUP
+            if (roleKey === "Wingback" && effectivePosition !== "WINGBACK_PROFILE") return 40;
+            if (roleKey === "WideCB" && effectivePosition !== "WIDECB_PROFILE" && effectivePosition !== "WINGBACK_PROFILE") return 40;
+            if (roleKey === "Playmaker" && effectivePosition !== "PLAYMAKER_PROFILE") return 40;
+            if (roleKey === "Winger" && effectivePosition !== "WINGER_PROFILE") return 40;
+            if (roleKey === "InsideForward" && effectivePosition === "WINGER_PROFILE") return 40;
+            if (roleKey === "False9" && effectivePosition !== "FALSE9_PROFILE") return 40;
+
+            // Prevent wingbacks and playmakers from overflowing standard center-back or striker roles
+            if ((roleKey === "BallPlayingCB" || roleKey === "ShotBlocker") && effectivePosition === "WINGBACK_PROFILE") return 40;
+            if ((roleKey === "TargetMan" || roleKey === "PressingForward") && effectivePosition === "FALSE9_PROFILE") return 40;
+
+            // Fallback for native, un-adjusted structural lines
+            if (!effectivePosition.includes("_PROFILE") && player.Position !== roleProfile.type) return 40;
+
+            // 3. CORE RATIO WEIGHTING CALCULATION
             let totalWeightedScore = 0;
-            roleProfile.metrics.forEach(m => {
+            let activeMetrics = roleProfile.metrics;
+            
+            // Fallback metrics mapping if a custom group alignment bypass occurs
+            if (roleKey === "Winger") activeMetrics = profileWeightingMatrices["InsideForward"].metrics;
+
+            activeMetrics.forEach(m => {
                 let actualVal = parseFloat(player[m.name]) || 0;
                 let ratio = actualVal / m.target;
                 if (ratio > 1.15) ratio = 1.15;
@@ -534,40 +559,39 @@
             });
 
             let scoreProduct = totalWeightedScore * 100;
-            let heightNum = parseInt(player.Height) || 180;
-            let clearNum = parseFloat(player.Clearances_per90) || 0;
-            let crossNum = parseFloat(player.Crosses_per90) || 0;
-            let dribblesNum = parseFloat(player.DribblesCompleted_per90) || 0;
-            let progressivePassNum = parseFloat(player.ProgressivePasses_per90) || 0;
 
-            // =================================================================
-            // GLOBAL DATA ENGINE FILTERS (Applies calibrations dynamically)
-            // =================================================================
+            // 4. BALANCED PROFILE ADJUSTMENTS (Applies globally to all 1248 players)
             if (roleKey === "BallPlayingCB") {
                 if (heightNum < 184) scoreProduct -= 15;
-                if (clearNum < 3.0) scoreProduct -= 10;
+                if (clearNum < 3.2) scoreProduct -= 10;
             }
             if (roleKey === "ShotBlocker") {
-                if (heightNum < 182) scoreProduct -= 15;
-                if (clearNum < 3.5) scoreProduct -= 10;
+                if (heightNum < 186) scoreProduct -= 15;
+                if (clearNum < 4.2) scoreProduct -= 15;
             }
             if (roleKey === "Wingback") {
-                // If they have traditional high fullback attributes, give bonus
-                if (heightNum <= 184) scoreProduct += 8;
-                if (heightNum >= 188) scoreProduct -= 30; // CBs don't fit wingback
+                if (crossNum >= 0.4) scoreProduct += 10;
+                if (dribblesNum > 1.0) scoreProduct += 5;
             }
             if (roleKey === "WideCB") {
-                // Catches fullbacks playing inside or tall mobile hybrid tracking line defenders
-                if (heightNum >= 180 && heightNum <= 192) scoreProduct += 10;
-            }
-            if (roleKey === "Winger") {
-                if (dribblesNum > 1.2) scoreProduct += 10;
-            }
-            if (roleKey === "InsideForward") {
-                if (parseFloat(player.xG_per90) > 0.25) scoreProduct += 10;
+                // Perfect hybrid balance (e.g. Dan Burn, Ezri Konsa, Luke Shaw)
+                if (heightNum >= 183 && heightNum <= 192) scoreProduct += 10;
+                if (clearNum >= 3.5) scoreProduct += 5;
             }
             if (roleKey === "Playmaker") {
-                if (progressivePassNum > 3.5) scoreProduct += 8;
+                if (keyPassNum >= 1.5) scoreProduct += 10;
+                if (xgNum > 0.20) scoreProduct -= 10; // Pushes high-scorers toward Inside Forward/False 9 instead
+            }
+            if (roleKey === "Winger") {
+                if (crossNum >= 0.4) scoreProduct += 12;
+                if (shotsNum >= 2.5) scoreProduct -= 15; // Wingers cross, Inside Forwards shoot
+            }
+            if (roleKey === "InsideForward") {
+                if (shotsNum >= 2.5) scoreProduct += 10;
+                if (crossNum > 0.4) scoreProduct -= 12;
+            }
+            if (roleKey === "False9") {
+                if (keyPassNum >= 1.2) scoreProduct += 10;
             }
 
             let finalScore = Math.round(scoreProduct);
@@ -576,7 +600,6 @@
 
             return finalScore;
         }
-
         function findBestSuitedRole(player) {
             let highRole = ""; let maxScore = -1;
             Object.keys(profileWeightingMatrices).forEach(rk => {
