@@ -13,7 +13,6 @@
             --border-muted: #26314d;
             --neon-blue: #00d2ff;
             --emerald-green: #05ffa1;
-            --amber-gold: #ffb800;
             --text-main: #f3f4f6;
             --text-muted: #7e8da8;
         }
@@ -47,7 +46,7 @@
             padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none; margin-bottom: 6px;
         }
 
-        /* Accordion Dropdown Menu Panel Styles */
+        /* Three-Tier Accordion Styling */
         .custom-dropdown-container { position: relative; width: 100%; }
         .dropdown-trigger {
             background: var(--bg-card); border: 1px solid var(--border-muted);
@@ -58,7 +57,7 @@
         .dropdown-menu-panel {
             position: absolute; top: 100%; left: 0; width: 100%;
             background: var(--bg-surface); border: 1px solid var(--border-muted);
-            border-radius: 6px; z-index: 999; max-height: 320px; overflow-y: auto;
+            border-radius: 6px; z-index: 999; max-height: 355px; overflow-y: auto;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5); margin-top: 4px;
         }
         .accordion-group { border-bottom: 1px solid var(--border-muted); }
@@ -69,13 +68,17 @@
         .accordion-header:hover { background: rgba(255,255,255,0.03); }
         .accordion-arrow { font-size: 11px; transition: transform 0.2s; padding: 4px 8px; color: var(--neon-blue); }
         .accordion-arrow.rotated { transform: rotate(90deg); }
-        .accordion-content { background: var(--bg-card); }
-        .sub-role-option { padding: 8px 20px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+        .accordion-content { background: var(--bg-card); padding-left: 10px; }
+        
+        .sub-pos-header { padding: 6px 10px; font-size: 12px; font-weight: 600; color: #ffffff; display: flex; justify-content: space-between; cursor: pointer; }
+        .sub-pos-content { padding-left: 10px; background: rgba(0,0,0,0.1); }
+        
+        .sub-role-option { padding: 6px 15px; font-size: 11px; color: var(--text-muted); cursor: pointer; }
         .sub-role-option:hover { background: rgba(0,210,255,0.1); color: white; }
 
-        /* Structural Deck for side-by-side views */
+        /* Main View Splits */
         .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; align-items: start; }
-        @media (max-width: 680px) { .profile-deck { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .profile-deck { grid-template-columns: 1fr; } }
 
         .scout-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
@@ -92,6 +95,9 @@
             font-size: 12px; color: var(--text-muted);
         }
         .bio-strip span strong { color: white; font-weight: 600; }
+
+        /* Tactical Radar Styling Core */
+        .radar-box-container { display: flex; justify-content: center; align-items: center; background: var(--bg-surface); border: 1px solid var(--border-muted); border-radius: 8px; padding: 12px; height: 210px; }
 
         .fm-matrix-wrapper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
         @media (max-width: 768px) { .fm-matrix-wrapper { grid-template-columns: 1fr; gap: 16px; } }
@@ -124,50 +130,73 @@
 <body>
 
     <h1>ProScout <span class="accent-txt">2026</span></h1>
-    <div class="subtitle">Football Manager Dynamic Engine Registry</div>
+    <div class="subtitle">Tactical Performance Dashboard Matrix</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament roster database...">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search world cup registry tracking data...">
         <div class="filter-grid">
             <div class="custom-dropdown-container">
                 <div class="dropdown-trigger" id="dropdownTriggerBtn" onclick="toggleAccordionDropdown()">All Positions ▶</div>
                 <div class="dropdown-menu-panel hidden" id="dropdownMenuPanel">
-                    <div class="sub-role-option" onclick="selectRoleGroup('all', 'All Positions')">All Positions (Show Everything)</div>
+                    <div class="sub-role-option" onclick="selectRoleGroup('all', 'all', 'All Positions')">All Positions (Clear Filters)</div>
+                    
                     <div class="accordion-group">
-                        <div class="accordion-header" onclick="selectRoleGroup('GK', 'Goalkeepers', event)">Goalkeepers<span class="accordion-arrow" onclick="toggleSection('secGk', event)">▶</span></div>
+                        <div class="accordion-header" onclick="selectRoleGroup('macro', 'GK', 'Goalkeepers', event)">Goalkeepers <span class="accordion-arrow" onclick="toggleSection('secGk', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secGk">
-                            <div class="sub-role-option" onclick="selectRoleGroup('ShotStopper', 'Traditional Shot Stopper')">Traditional Shot Stopper</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('SweeperKeeper', 'Sweeper Keeper')">Sweeper Keeper</div>
+                            <div class="sub-role-option" onclick="selectRoleGroup('role', 'ShotStopper', 'Traditional Shot Stopper')">Traditional Shot Stopper</div>
+                            <div class="sub-role-option" onclick="selectRoleGroup('role', 'SweeperKeeper', 'Sweeper Keeper')">Sweeper Keeper</div>
                         </div>
                     </div>
+
                     <div class="accordion-group">
-                        <div class="accordion-header" onclick="selectRoleGroup('CB_FB', 'Defenders', event)">Defenders<span class="accordion-arrow" onclick="toggleSection('secDf', event)">▶</span></div>
+                        <div class="accordion-header" onclick="selectRoleGroup('macro', 'CB_LB_RB', 'Defenders', event)">Defenders <span class="accordion-arrow" onclick="toggleSection('secDf', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secDf">
-                            <div class="sub-role-option" onclick="selectRoleGroup('BallPlayingCB', 'Ball-Playing CB')">Ball-Playing CB</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('ShotBlocker', 'Stopper')">Stopper</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('Wingback', 'Wingback')">Wingback</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('WideCB', 'Wide Centre Back')">Wide Centre Back</div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'CB', 'Central Defenders', event)">Centre-Backs (CB) <span class="accordion-arrow" onclick="toggleSection('subCb', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subCb">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'BallPlayingCB', 'Ball-Playing CB')">Ball-Playing CB</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'ShotBlocker', 'Stopper')">Stopper</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'WideCB', 'Wide Centre Back')">Wide Centre Back</div>
+                            </div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'LB_RB', 'Fullbacks', event)">Fullbacks / Wingbacks (LB/RB) <span class="accordion-arrow" onclick="toggleSection('subFb', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subFb">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'Wingback', 'Wingback')">Wingback</div>
+                            </div>
                         </div>
                     </div>
+
                     <div class="accordion-group">
-                        <div class="accordion-header" onclick="selectRoleGroup('MF_AM', 'Midfielders', event)">Midfielders<span class="accordion-arrow" onclick="toggleSection('secMf', event)">▶</span></div>
+                        <div class="accordion-header" onclick="selectRoleGroup('macro', 'DM_CM_AM', 'Midfielders', event)">Midfielders <span class="accordion-arrow" onclick="toggleSection('secMf', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secMf">
-                            <div class="sub-role-option" onclick="selectRoleGroup('DLP', 'Deep Progressor')">Deep Progressor</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('BallWinner', 'Destroyer')">Destroyer</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('BoxToBox', 'Box-to-Box Engine')">Box-to-Box Engine</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('Playmaker', 'Playmaker')">Playmaker</div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'DM_CM', 'Central Midfield', event)">Central Midfield (DM/CM) <span class="accordion-arrow" onclick="toggleSection('subCm', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subCm">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'DLP', 'Deep Progressor')">Deep Progressor</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'BallWinner', 'Destroyer')">Destroyer</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'BoxToBox', 'Box-to-Box Engine')">Box-to-Box Engine</div>
+                            </div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'AM', 'Attacking Midfield', event)">Attacking Midfield (AM) <span class="accordion-arrow" onclick="toggleSection('subAm', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subAm">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'Playmaker', 'Playmaker')">Playmaker</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'False9', 'False 9')">False 9</div>
+                            </div>
                         </div>
                     </div>
+
                     <div class="accordion-group">
-                        <div class="accordion-header" onclick="selectRoleGroup('FW_ST', 'Attackers', event)">Attackers<span class="accordion-arrow" onclick="toggleSection('secAt', event)">▶</span></div>
+                        <div class="accordion-header" onclick="selectRoleGroup('macro', 'LW_RW_ST', 'Attackers', event)">Attackers <span class="accordion-arrow" onclick="toggleSection('secAt', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secAt">
-                            <div class="sub-role-option" onclick="selectRoleGroup('TargetMan', 'Clinical No.9')">Clinical No.9</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('InsideForward', 'Inside Forward')">Inside Forward</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('Winger', 'Winger')">Winger</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('PressingForward', 'Pressing Forward')">Pressing Forward</div>
-                            <div class="sub-role-option" onclick="selectRoleGroup('False9', 'False 9')">False 9</div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'LW_RW', 'Wingers', event)">Wide Wingers (LW/RW) <span class="accordion-arrow" onclick="toggleSection('subWg', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subWg">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'Winger', 'Winger')">Winger</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'InsideForward', 'Inside Forward')">Inside Forward</div>
+                            </div>
+                            <div class="sub-pos-header" onclick="selectRoleGroup('pos', 'ST', 'Strikers', event)">Strikers (ST) <span class="accordion-arrow" onclick="toggleSection('subSt', event)">▶</span></div>
+                            <div class="sub-pos-content hidden" id="subSt">
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'TargetMan', 'Clinical No.9')">Clinical No.9</div>
+                                <div class="sub-role-option" onclick="selectRoleGroup('role', 'PressingForward', 'Pressing Forward')">Pressing Forward</div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div>
@@ -190,8 +219,8 @@
         <div style="margin-bottom: 12px;">
             <select id="selSinglePlayer"></select>
         </div>
-        <div class="single-profile-wrapper">
-            <div class="scout-card" style="width:100%; box-sizing:border-box;">
+        <div class="profile-deck">
+            <div class="scout-card" style="height:100%;">
                 <div class="card-header-block">
                     <div>
                         <div class="p-name" style="font-size:18px;" id="sName">-</div>
@@ -200,6 +229,9 @@
                     <div class="rating-pct" style="font-size:38px;" id="sScore"></div>
                 </div>
                 <div class="bio-strip" id="sBio"></div>
+            </div>
+            <div class="radar-box-container">
+                <canvas id="radarCanvas" width="200" height="200"></canvas>
             </div>
         </div>
         <h3 id="attrTitleHeader">Attributes Profile</h3>
@@ -249,22 +281,23 @@
 
     <script>
         let WORLD_CUP_DATABASE = [];
-        let ACTIVE_ROLE_FILTER = "all"; 
+        let ACTIVE_FILTER_TYPE = "all";
+        let ACTIVE_FILTER_KEY = "all";
 
         const roleRequiredWeights = {
             "BallPlayingCB": { type: "CB", allowed: ["CB"], label: "Ball-Playing CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
             "ShotBlocker": { type: "CB", allowed: ["CB"], label: "Stopper", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
-            "Wingback": { type: "FB", allowed: ["FB"], label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
-            "WideCB": { type: "CB", allowed: ["CB", "FB"], label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
-            "DLP": { type: "MF", allowed: ["MF", "AM"], label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
-            "BallWinner": { type: "MF", allowed: ["MF"], label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
-            "BoxToBox": { type: "MF", allowed: ["MF"], label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
-            "Playmaker": { type: "AM", allowed: ["MF", "AM"], label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
+            "Wingback": { type: "FB", allowed: ["LB","RB"], label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
+            "WideCB": { type: "CB", allowed: ["CB", "LB", "RB"], label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
+            "DLP": { type: "MF", allowed: ["DM","CM","AM"], label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
+            "BallWinner": { type: "MF", allowed: ["DM","CM"], label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
+            "BoxToBox": { type: "MF", allowed: ["CM"], label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
+            "Playmaker": { type: "AM", allowed: ["CM","AM"], label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
             "TargetMan": { type: "ST", allowed: ["ST"], label: "Clinical No.9", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
-            "InsideForward": { type: "FW", allowed: ["FW", "ST"], label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
-            "Winger": { type: "FW", allowed: ["FW"], label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
+            "InsideForward": { type: "FW", allowed: ["LW","RW","ST"], label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
+            "Winger": { type: "FW", allowed: ["LW","RW"], label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
             "PressingForward": { type: "ST", allowed: ["ST"], label: "Pressing Forward", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
-            "False9": { type: "ST", allowed: ["FW", "ST", "AM"], label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
+            "False9": { type: "ST", allowed: ["AM","ST"], label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
             "ShotStopper": { type: "GK", allowed: ["GK"], label: "Traditional Shot Stopper", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
             "SweeperKeeper": { type: "GK", allowed: ["GK"], label: "Sweeper Keeper", keys: ["Reflexes", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
         };
@@ -272,9 +305,10 @@
         function toggleAccordionDropdown() { document.getElementById('dropdownMenuPanel').classList.toggle('hidden'); }
         function toggleSection(id, event) { event.stopPropagation(); document.getElementById(id).classList.toggle('hidden'); event.target.classList.toggle('rotated'); }
         
-        function selectRoleGroup(roleKey, displayLabel, event) {
+        function selectRoleGroup(type, key, displayLabel, event) {
             if (event) event.stopPropagation();
-            ACTIVE_ROLE_FILTER = roleKey;
+            ACTIVE_FILTER_TYPE = type;
+            ACTIVE_FILTER_KEY = key;
             document.getElementById('dropdownTriggerBtn').innerText = displayLabel;
             document.getElementById('dropdownMenuPanel').classList.add('hidden');
             runDataPipeline();
@@ -289,7 +323,7 @@
                 runDataPipeline();
                 runH2hDataPipeline();
             } catch (error) {
-                console.log("Database parse sync error matrix lines missing", error);
+                console.log("Database fetch failed template structural breakdown missing", error);
             }
         }
 
@@ -311,28 +345,23 @@
             const sS = document.getElementById('selSinglePlayer');
             const hA = document.getElementById('h2hRoleA');
             const hB = document.getElementById('h2hRoleB');
-            
             sS.innerHTML = ''; hA.innerHTML = ''; hB.innerHTML = '';
             
             hA.appendChild(new Option("All Positions / Roles", "all"));
             hB.appendChild(new Option("All Positions / Roles", "all"));
-            
             Object.keys(roleRequiredWeights).forEach(rk => {
                 hA.appendChild(new Option(roleRequiredWeights[rk].label, rk));
                 hB.appendChild(new Option(roleRequiredWeights[rk].label, rk));
             });
 
             WORLD_CUP_DATABASE.forEach(p => {
-                let label = `${p.CleanName} (${p.Position} - ${p.Nation})`;
-                sS.appendChild(new Option(label, p.Player));
+                sS.appendChild(new Option(`${p.CleanName} (${p.Position} - ${p.Nation})`, p.Player));
             });
         }
 
         function computeOverallRoleScore(player, roleKey) {
             let config = roleRequiredWeights[roleKey];
-            if (!config) return 40;
-            if (!config.allowed.includes(player.Position)) return 40;
-
+            if (!config || !config.allowed.includes(player.Position)) return 40;
             let total = 0;
             config.keys.forEach(k => { total += (parseFloat(player[k]) || 10); });
             return Math.min(92, Math.max(40, Math.round(((total / config.keys.length) / 20) * 100)));
@@ -356,13 +385,15 @@
             if (nation !== 'all') filtered = filtered.filter(p => p.Nation === nation);
             if (query) filtered = filtered.filter(p => p.CleanName.toLowerCase().includes(query) || p.Club.toLowerCase().includes(query));
 
-            if (ACTIVE_ROLE_FILTER === "GK") filtered = filtered.filter(p => p.Position === "GK");
-            else if (ACTIVE_ROLE_FILTER === "CB_FB") filtered = filtered.filter(p => ["CB", "FB"].includes(p.Position));
-            else if (ACTIVE_ROLE_FILTER === "MF_AM") filtered = filtered.filter(p => ["MF", "AM"].includes(p.Position));
-            else if (ACTIVE_ROLE_FILTER === "FW_ST") filtered = filtered.filter(p => ["FW", "ST"].includes(p.Position));
-            else if (ACTIVE_ROLE_FILTER !== "all") {
-                let config = roleRequiredWeights[ACTIVE_ROLE_FILTER];
-                filtered = filtered.filter(p => config.allowed.includes(p.Position));
+            // Execute Tiered filtering rules natively
+            if (ACTIVE_FILTER_TYPE === "macro") {
+                let keys = ACTIVE_FILTER_KEY.split('_');
+                filtered = filtered.filter(p => keys.includes(p.Position));
+            } else if (ACTIVE_FILTER_TYPE === "pos") {
+                let keys = ACTIVE_FILTER_KEY.split('_');
+                filtered = filtered.filter(p => keys.includes(p.Position));
+            } else if (ACTIVE_FILTER_TYPE === "role") {
+                filtered = filtered.filter(p => roleRequiredWeights[ACTIVE_FILTER_KEY].allowed.includes(p.Position));
             }
 
             const sS = document.getElementById('selSinglePlayer');
@@ -373,13 +404,13 @@
             else if (filtered[0]) sS.value = filtered[0].Player;
 
             let ranked = [...filtered];
-            let isSpecificRole = ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER);
-            if (isSpecificRole) {
-                ranked.forEach(p => p.fitScore = computeOverallRoleScore(p, ACTIVE_ROLE_FILTER));
+            let isRole = ACTIVE_FILTER_TYPE === "role";
+            if (isRole) {
+                ranked.forEach(p => p.fitScore = computeOverallRoleScore(p, ACTIVE_FILTER_KEY));
                 ranked.sort((a,b) => b.fitScore - a.fitScore);
             }
 
-            renderRankingsLayout(ranked, isSpecificRole);
+            renderRankingsLayout(ranked, isRole);
             renderRosterLayout(filtered);
             renderSingleCardLayout();
         }
@@ -387,15 +418,12 @@
         function runH2hDataPipeline() {
             const roleA = document.getElementById('h2hRoleA').value;
             const roleB = document.getElementById('h2hRoleB').value;
-            
-            let listA = WORLD_CUP_DATABASE;
-            let listB = WORLD_CUP_DATABASE;
+            let listA = WORLD_CUP_DATABASE; let listB = WORLD_CUP_DATABASE;
             
             if (roleA !== "all") listA = listA.filter(p => roleRequiredWeights[roleA].allowed.includes(p.Position));
             if (roleB !== "all") listB = listB.filter(p => roleRequiredWeights[roleB].allowed.includes(p.Position));
             
-            const sA = document.getElementById('selPlayerA');
-            const sB = document.getElementById('selPlayerB');
+            const sA = document.getElementById('selPlayerA'); const sB = document.getElementById('selPlayerB');
             const prevA = sA.value; const prevB = sB.value;
             
             sA.innerHTML = ''; sB.innerHTML = '';
@@ -412,11 +440,10 @@
             const p = WORLD_CUP_DATABASE.find(player => player.Player === document.getElementById('selSinglePlayer').value);
             if (!p) return;
 
-            let displayRole = (ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER)) ? ACTIVE_ROLE_FILTER : "";
+            let isRole = ACTIVE_FILTER_TYPE === "role";
             document.getElementById('sName').innerText = p.CleanName;
             document.getElementById('sClub').innerText = p.Club;
-            document.getElementById('sScore').innerText = displayRole ? `${computeOverallRoleScore(p, displayRole)}%` : "";
-            
+            document.getElementById('sScore').innerText = isRole ? `${computeOverallRoleScore(p, ACTIVE_FILTER_KEY)}%` : "";
             document.getElementById('sBio').innerHTML = `
                 <span>Nation: <strong>${p.Nation}</strong></span>
                 <span>Position: <strong>${p.Position}</strong></span>
@@ -424,10 +451,11 @@
                 <span>Height: <strong>${p.Height} cm</strong></span>
             `;
 
-            document.getElementById('attrTitleHeader').innerText = displayRole ? `Attributes (Scouted for ${roleRequiredWeights[displayRole].label})` : "Attributes Profile";
-            const container = document.getElementById('fmMatrixContainer'); container.innerHTML = '';
-            let highlights = displayRole ? roleRequiredWeights[displayRole].keys : [];
+            drawVectorRadarPolygon(p);
 
+            document.getElementById('attrTitleHeader').innerText = isRole ? `Attributes (Scouted for ${roleRequiredWeights[ACTIVE_FILTER_KEY].label})` : "Attributes Profile";
+            const container = document.getElementById('fmMatrixContainer'); container.innerHTML = '';
+            let highlights = isRole ? roleRequiredWeights[ACTIVE_FILTER_KEY].keys : [];
             buildFmLayoutColumns(container, p, highlights);
         }
 
@@ -452,6 +480,66 @@
 
             buildFmLayoutColumns(containerA, pA, roleA !== "all" ? roleRequiredWeights[roleA].keys : []);
             buildFmLayoutColumns(containerB, pB, roleB !== "all" ? roleRequiredWeights[roleB].keys : []);
+        }
+
+        function drawVectorRadarPolygon(p) {
+            const canvas = document.getElementById('radarCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let vectors = [];
+            if (p.Position === "GK") {
+                vectors = [
+                    { name: "Reflex", val: p.Reflexes }, { name: "Handl", val: p.Handling },
+                    { name: "Aerial", val: p.AerialReach }, { name: "Command", val: p.CommandOfArea },
+                    { name: "Distrib", val: p.Kicking }, { name: "Agil", val: p.Agility }
+                ];
+            } else {
+                vectors = [
+                    { name: "Pace", val: Math.round(((p.Pace + p.Acceleration)/2)) },
+                    { name: "Def", val: Math.round(((p.Tackling + p.Marking + p.Positioning)/3)) },
+                    { name: "Cre", val: Math.round(((p.Passing + p.Vision + p.Technique)/3)) },
+                    { name: "Att", val: Math.round(((p.Finishing + p.OffTheBall + p.Dribbling)/3)) },
+                    { name: "Aer", val: Math.round(((p.Heading + p.JumpingReach)/2)) },
+                    { name: "Phy", val: Math.round(((p.Strength + p.Stamina)/2)) }
+                ];
+            }
+
+            let center = 100; let maxRadius = 70;
+            ctx.strokeStyle = '#26314d'; ctx.lineWidth = 1;
+            for(let r=1; r<=4; r++) {
+                ctx.beginPath();
+                let rad = (maxRadius / 4) * r;
+                for(let i=0; i<6; i++) {
+                    let angle = (Math.PI / 3) * i - Math.PI / 2;
+                    let x = center + rad * Math.cos(angle);
+                    let y = center + rad * Math.sin(angle);
+                    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+
+            ctx.fillStyle = 'rgba(0, 210, 255, 0.15)';
+            ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i=0; i<6; i++) {
+                let angle = (Math.PI / 3) * i - Math.PI / 2;
+                let pct = (vectors[i].val || 10) / 20;
+                let rad = maxRadius * pct;
+                let x = center + rad * Math.cos(angle);
+                let y = center + rad * Math.sin(angle);
+                if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#7e8da8'; ctx.font = 'bold 9px Inter'; ctx.textBaseline = 'middle';
+            for(let i=0; i<6; i++) {
+                let angle = (Math.PI / 3) * i - Math.PI / 2;
+                let x = center + (maxRadius + 14) * Math.cos(angle);
+                let y = center + (maxRadius + 10) * Math.sin(angle);
+                ctx.textAlign = Math.abs(x - center) < 1 ? 'center' : (x > center ? 'left' : 'right');
+                ctx.fillText(vectors[i].name, x, y);
+            }
         }
 
         function buildFmLayoutColumns(targetContainer, p, highlights) {
@@ -503,12 +591,12 @@
         document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
         document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
 
-        function renderRankingsLayout(list, isSpecificRole) {
+        function renderRankingsLayout(list, isRole) {
             const anchor = document.getElementById('rankingsAnchor');
-            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matches found.</div>' : '';
+            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matches located.</div>' : '';
             list.forEach((p, idx) => {
                 let div = document.createElement('div'); div.className = 'list-row';
-                let suffix = isSpecificRole ? `${p.fitScore}% Match` : findBestSuitedRole(p);
+                let suffix = isRole ? `${p.fitScore}% Match` : findBestSuitedRole(p);
                 div.innerHTML = `<div><div style="font-weight:700; color:white;">#${idx+1} ${p.CleanName} (${p.Position})</div><div style="font-size:11px; color:var(--text-muted);">${p.Club} — ${p.Nation}</div></div><div style="font-weight:800; color:var(--emerald-green);">${suffix}</div>`;
                 anchor.appendChild(div);
             });
