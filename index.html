@@ -49,7 +49,6 @@
         }
 
         .single-profile-wrapper { width: 100%; margin-bottom: 16px; }
-        .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .scout-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
             border-radius: 8px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;
@@ -66,44 +65,27 @@
         }
         .bio-strip span strong { color: white; font-weight: 600; }
 
-        /* FM 3-Column Attribute Grid Block */
-        .fm-matrix-wrapper {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 10px;
-        }
-        @media (max-width: 768px) {
-            .fm-matrix-wrapper { grid-template-columns: 1fr; gap: 16px; }
-        }
+        .fm-matrix-wrapper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+        @media (max-width: 768px) { .fm-matrix-wrapper { grid-template-columns: 1fr; gap: 16px; } }
 
-        .fm-column {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-muted);
-            border-radius: 8px;
-            padding: 10px;
-        }
-        .fm-column-title {
-            font-size: 12px; font-weight: 800; color: var(--neon-blue);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            margin-bottom: 10px; border-bottom: 1px solid var(--border-muted);
-            padding-bottom: 6px;
-        }
+        .fm-column { background: var(--bg-surface); border: 1px solid var(--border-muted); border-radius: 8px; padding: 10px; }
+        .fm-column-title { font-size: 12px; font-weight: 800; color: var(--neon-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; border-bottom: 1px solid var(--border-muted); padding-bottom: 6px; }
 
-        .fm-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 5px 4px; border-radius: 4px; font-size: 13px; margin-bottom: 2px;
-        }
+        .fm-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 4px; border-radius: 4px; font-size: 13px; margin-bottom: 2px; }
         .fm-row:nth-child(even) { background: rgba(255,255,255,0.02); }
-        .fm-label { color: var(--text-main); font-weight: 500; }
-        .fm-label.highlighted { color: var(--emerald-green); font-weight: 700; }
         
-        .fm-value {
-            font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 12px; min-width: 16px; text-align: center;
-        }
+        /* JOB 3: Visual Highlighting Classes matching FM Screen Blueprints */
+        .fm-label { color: var(--text-muted); font-weight: 500; transition: all 0.2s; }
+        .fm-label.highlighted { color: #ffffff !important; font-weight: 700; }
+        
+        .fm-value { font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 12px; min-width: 16px; text-align: center; }
         .v-high { background: rgba(5,255,161,0.15); color: var(--emerald-green); }
         .v-med { background: rgba(0,210,255,0.15); color: var(--neon-blue); }
-        .v-low { background: rgba(126,141,168,0.1); color: var(--text-muted); }
+        .v-low { background: rgba(126,141,168,0.08); color: rgba(126,141,168,0.6); }
+
+        /* Dim row if it isn't a vital attribute for the selected scouting role */
+        .fm-row.dimmed .fm-label { color: rgba(126,141,168,0.35); }
+        .fm-row.dimmed .fm-value { opacity: 0.4; background: transparent; color: var(--text-muted); }
 
         .tab-bar { display: flex; gap: 12px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; overflow-x: auto; white-space: nowrap; }
         .tab-bar::-webkit-scrollbar { display: none; }
@@ -119,7 +101,7 @@
     <div class="subtitle">Football Manager Dynamic Engine Registry</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search world attribute grid... (e.g. Lammens, Messi, Mbappe)">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search world attribute grid... (e.g. Haaland, Bruno, Messi)">
         <div class="filter-grid">
             <div>
                 <select id="roleSelector">
@@ -241,23 +223,23 @@
     <script>
         let WORLD_CUP_DATABASE = [];
 
-        // Dynamic FM Mapping Weights representing required indicators
+        // JOB 2: Refined Attribute mapping targets aligning natively to split position categories
         const roleRequiredWeights = {
-            "BallPlayingCB": { type: "DF", label: "Ball-Playing CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
-            "ShotBlocker": { type: "DF", label: "Stopper", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
-            "Wingback": { type: "DF", label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
-            "WideCB": { type: "DF", label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
-            "DLP": { type: "MF", label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
-            "BallWinner": { type: "MF", label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
-            "BoxToBox": { type: "MF", label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
-            "Playmaker": { type: "MF", label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
-            "TargetMan": { type: "FW", label: "Clinical No.9", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
-            "InsideForward": { type: "FW", label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
-            "Winger": { type: "FW", label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
-            "PressingForward": { type: "FW", label: "Pressing Forward", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
-            "False9": { type: "FW", label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
-            "ShotStopper": { type: "GK", label: "Traditional Shot Stopper", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
-            "SweeperKeeper": { type: "GK", label: "Sweeper Keeper", keys: ["Refweres", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
+            "BallPlayingCB": { allowed: ["CB"], label: "Ball-Playing CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
+            "ShotBlocker": { allowed: ["CB"], label: "Stopper", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
+            "Wingback": { allowed: ["FB"], label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
+            "WideCB": { allowed: ["CB", "FB"], label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
+            "DLP": { allowed: ["MF", "AM"], label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
+            "BallWinner": { allowed: ["MF"], label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
+            "BoxToBox": { allowed: ["MF"], label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
+            "Playmaker": { allowed: ["MF", "AM"], label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
+            "TargetMan": { allowed: ["ST"], label: "Clinical No.9", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
+            "InsideForward": { allowed: ["FW", "ST"], label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
+            "Winger": { allowed: ["FW"], label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
+            "PressingForward": { allowed: ["ST"], label: "Pressing Forward", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
+            "False9": { allowed: ["FW", "ST", "AM"], label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
+            "ShotStopper": { allowed: ["GK"], label: "Traditional Shot Stopper", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
+            "SweeperKeeper": { allowed: ["GK"], label: "Sweeper Keeper", keys: ["Reflexes", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
         };
 
         async function loadTournamentDatabase() {
@@ -267,7 +249,7 @@
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 runDataPipeline();
             } catch (error) {
-                console.log("Database failed to load configuration lines", error);
+                console.log("Database fetch layout configuration missing lines", error);
             }
         }
 
@@ -292,41 +274,20 @@
 
         function computeOverallRoleScore(player, roleKey) {
             let config = roleRequiredWeights[roleKey];
-            if (player.Position !== config.type) return 40;
-
-            let nameUpper = player.CleanName.toUpperCase();
-            
-            // TACTICAL ROSTER OVERRIDES (Keeps fullbacks out of center-back slots completely)
-            let isKnownFullback = any(x => nameUpper.includes(x), ["SPENCE", "OREILLY", "O'REILLY", "LIVRAMENTO", "BISSAKA", "WAN-BISSAKA", "SAMBO", "FLORANUS", "HAKIMI", "GUSTO", "CUCURELLA"]);
-            if ((roleKey === "BallPlayingCB" || roleKey === "ShotBlocker" || roleKey === "WideCB") && isKnownFullback) {
-                return 40; // Block them from center-back role assignments natively
-            }
+            if (!config.allowed.includes(player.Position)) return 40;
 
             let total = 0;
             config.keys.forEach(k => { total += (parseFloat(player[k]) || 10); });
             let avg = total / config.keys.length;
             
             let finalScore = Math.round((avg / 20) * 100);
-            
-            // Scale elite players cleanly into the high 80s and 90s
-            if (roleKey === "Playmaker" && nameUpper.includes("BRUNO")) return 92;
-            if (roleKey === "Wingback" && nameUpper.includes("SPENCE")) return 86;
-
             return Math.min(92, Math.max(40, finalScore));
-        }
-
-        // Helper helper logic snippet
-        function any(cb, arr) {
-            for (let i = 0; i < arr.length; i++) {
-                if (cb(arr[i])) return true;
-            }
-            return false;
         }
 
         function findBestSuitedRole(player) {
             let highRole = ""; let maxScore = -1;
             Object.keys(roleRequiredWeights).forEach(rk => {
-                if (roleRequiredWeights[rk].type === player.Position) {
+                if (roleRequiredWeights[rk].allowed.includes(player.Position)) {
                     let s = computeOverallRoleScore(player, rk);
                     if (s > maxScore) { maxScore = s; highRole = rk; }
                 }
@@ -337,11 +298,12 @@
         function runDataPipeline() {
             if (WORLD_CUP_DATABASE.length === 0) return;
             const role = document.getElementById('roleSelector').value;
-            const targetType = roleRequiredWeights[role].type;
+            const config = roleRequiredWeights[role];
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
-            let dropdownList = WORLD_CUP_DATABASE.filter(p => p.Position === targetType);
+            // Filter drop down options to match acceptable split types safely
+            let dropdownList = WORLD_CUP_DATABASE.filter(p => config.allowed.includes(p.Position));
             if (nation !== 'all') dropdownList = dropdownList.filter(p => p.Nation === nation);
 
             const sS = document.getElementById('selSinglePlayer');
@@ -354,7 +316,7 @@
             if (nation !== 'all') activeDataset = activeDataset.filter(p => p.Nation === nation);
             if (query) activeDataset = activeDataset.filter(p => p.CleanName.toLowerCase().includes(query));
 
-            let rankingsSet = activeDataset.filter(p => p.Position === targetType).sort((a,b) => b.fitScore - a.fitScore);
+            let rankingsSet = activeDataset.filter(p => config.allowed.includes(p.Position)).sort((a,b) => b.fitScore - a.fitScore);
             renderRankingsLayout(rankingsSet);
             renderRosterLayout(activeDataset);
             renderSingleCardLayout();
@@ -370,8 +332,8 @@
             document.getElementById('sScore').innerText = `${computeOverallRoleScore(p, role)}%`;
             document.getElementById('sBio').innerHTML = `
                 <span>Nation: <strong>${p.Nation || '-'}</strong></span>
-                <span>Pos Group: <strong>${p.Position || '-'}</strong></span>
-                <span>Age Group: <strong>${p.Age || '-'}</strong></span>
+                <span>Pos Classification: <strong>${p.Position || '-'}</strong></span>
+                <span>Age Metric: <strong>${p.Age || '-'}</strong></span>
                 <span>Height Line: <strong>${p.Height || '-'} cm</strong></span>
             `;
 
@@ -406,11 +368,15 @@
             container.appendChild(col1); container.appendChild(col2); container.appendChild(col3);
         }
 
+        // JOB 3: Appends rows with dynamic fading class if attribute is non-essential
         function appendFmRow(parent, label, val, highlights) {
-            let div = document.createElement('div'); div.className = 'fm-row';
+            let div = document.createElement('div');
+            let isVital = highlights.includes(label);
+            div.className = isVital ? 'fm-row' : 'fm-row dimmed';
+            
             let v = parseInt(val) || 10;
             let cClass = v >= 15 ? 'v-high' : (v >= 11 ? 'v-med' : 'v-low');
-            let isH = highlights.includes(label) ? 'highlighted' : '';
+            let isH = isVital ? 'highlighted' : '';
             
             div.innerHTML = `
                 <span class="fm-label ${isH}">${label.replace(/([A-Z])/g, ' $1').trim()}</span>
@@ -433,7 +399,7 @@
 
         function renderRankingsLayout(list) {
             const anchor = document.getElementById('rankingsAnchor');
-            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matches found.</div>' : '';
+            anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matching profiles located.</div>' : '';
             list.forEach((p, idx) => {
                 let div = document.createElement('div'); div.className = 'list-row';
                 div.innerHTML = `<div><div style="font-weight:700; color:white;">#${idx+1} ${p.CleanName}</div><div style="font-size:11px; color:var(--text-muted);">${p.Club} — ${p.Nation}</div></div><div style="font-weight:800; color:var(--emerald-green);">${p.fitScore}% Match</div>`;
