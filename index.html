@@ -75,17 +75,17 @@
         .fm-row:nth-child(even) { background: rgba(255,255,255,0.02); }
         
         /* JOB 3: Visual Highlighting Classes matching FM Screen Blueprints */
-        .fm-label { color: var(--text-muted); font-weight: 500; transition: all 0.2s; }
-        .fm-label.highlighted { color: #ffffff !important; font-weight: 700; }
+        .fm-label { color: var(--text-main); font-weight: 500; transition: all 0.2s; }
+        .fm-label.highlighted { color: var(--emerald-green) !important; font-weight: 700; }
         
         .fm-value { font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 12px; min-width: 16px; text-align: center; }
         .v-high { background: rgba(5,255,161,0.15); color: var(--emerald-green); }
         .v-med { background: rgba(0,210,255,0.15); color: var(--neon-blue); }
-        .v-low { background: rgba(126,141,168,0.08); color: rgba(126,141,168,0.6); }
+        .v-low { background: rgba(126,141,168,0.15); color: var(--text-muted); }
 
-        /* Dim row if it isn't a vital attribute for the selected scouting role */
-        .fm-row.dimmed .fm-label { color: rgba(126,141,168,0.35); }
-        .fm-row.dimmed .fm-value { opacity: 0.4; background: transparent; color: var(--text-muted); }
+        /* RE-CALIBRATED VIEW: Keeps secondary traits fully readable but distinct */
+        .fm-row.dimmed .fm-label { color: rgba(243, 244, 246, 0.6); font-weight: 400; }
+        .fm-row.dimmed .fm-value { opacity: 0.75; }
 
         .tab-bar { display: flex; gap: 12px; border-bottom: 1px solid var(--border-muted); margin-bottom: 16px; overflow-x: auto; white-space: nowrap; }
         .tab-bar::-webkit-scrollbar { display: none; }
