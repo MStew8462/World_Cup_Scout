@@ -44,10 +44,10 @@
         
         select {
             width: 100%; background: var(--bg-card); border: 1px solid var(--border-muted);
-            padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none;
+            padding: 10px; border-radius: 6px; color: white; font-size: 13px; outline: none; margin-bottom: 6px;
         }
 
-        /* Accordion Menu System */
+        /* Accordion Dropdown Menu Panel Styles */
         .custom-dropdown-container { position: relative; width: 100%; }
         .dropdown-trigger {
             background: var(--bg-card); border: 1px solid var(--border-muted);
@@ -70,11 +70,12 @@
         .accordion-arrow { font-size: 11px; transition: transform 0.2s; padding: 4px 8px; color: var(--neon-blue); }
         .accordion-arrow.rotated { transform: rotate(90deg); }
         .accordion-content { background: var(--bg-card); }
-        .sub-role-option {
-            padding: 8px 20px; font-size: 12px; color: var(--text-muted); cursor: pointer;
-        }
+        .sub-role-option { padding: 8px 20px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
         .sub-role-option:hover { background: rgba(0,210,255,0.1); color: white; }
-        .sub-role-option.selected { color: var(--emerald-green); font-weight: 700; }
+
+        /* Structural Deck for side-by-side views */
+        .profile-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; align-items: start; }
+        @media (max-width: 680px) { .profile-deck { grid-template-columns: 1fr; } }
 
         .scout-card {
             background: var(--bg-surface); border: 1px solid var(--border-muted);
@@ -123,16 +124,15 @@
 <body>
 
     <h1>ProScout <span class="accent-txt">2026</span></h1>
-    <div class="subtitle">Dynamic Global Roster Hub</div>
+    <div class="subtitle">Football Manager Dynamic Engine Registry</div>
 
     <div class="filter-wrapper">
-        <input type="text" id="playerSearch" class="search-field" placeholder="Search across all 1,248 tournament players...">
+        <input type="text" id="playerSearch" class="search-field" placeholder="Search tournament roster database...">
         <div class="filter-grid">
             <div class="custom-dropdown-container">
                 <div class="dropdown-trigger" id="dropdownTriggerBtn" onclick="toggleAccordionDropdown()">All Positions ▶</div>
                 <div class="dropdown-menu-panel hidden" id="dropdownMenuPanel">
-                    <div class="sub-role-option selected" id="optGlobalAll" onclick="selectRoleGroup('all', 'All Positions')">All Positions (Show Everything)</div>
-                    
+                    <div class="sub-role-option" onclick="selectRoleGroup('all', 'All Positions')">All Positions (Show Everything)</div>
                     <div class="accordion-group">
                         <div class="accordion-header" onclick="selectRoleGroup('GK', 'Goalkeepers', event)">Goalkeepers<span class="accordion-arrow" onclick="toggleSection('secGk', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secGk">
@@ -140,7 +140,6 @@
                             <div class="sub-role-option" onclick="selectRoleGroup('SweeperKeeper', 'Sweeper Keeper')">Sweeper Keeper</div>
                         </div>
                     </div>
-
                     <div class="accordion-group">
                         <div class="accordion-header" onclick="selectRoleGroup('CB_FB', 'Defenders', event)">Defenders<span class="accordion-arrow" onclick="toggleSection('secDf', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secDf">
@@ -150,7 +149,6 @@
                             <div class="sub-role-option" onclick="selectRoleGroup('WideCB', 'Wide Centre Back')">Wide Centre Back</div>
                         </div>
                     </div>
-
                     <div class="accordion-group">
                         <div class="accordion-header" onclick="selectRoleGroup('MF_AM', 'Midfielders', event)">Midfielders<span class="accordion-arrow" onclick="toggleSection('secMf', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secMf">
@@ -160,7 +158,6 @@
                             <div class="sub-role-option" onclick="selectRoleGroup('Playmaker', 'Playmaker')">Playmaker</div>
                         </div>
                     </div>
-
                     <div class="accordion-group">
                         <div class="accordion-header" onclick="selectRoleGroup('FW_ST', 'Attackers', event)">Attackers<span class="accordion-arrow" onclick="toggleSection('secAt', event)">▶</span></div>
                         <div class="accordion-content hidden" id="secAt">
@@ -200,7 +197,7 @@
                         <div class="p-name" style="font-size:18px;" id="sName">-</div>
                         <div class="p-club" style="font-size:13px;" id="sClub">-</div>
                     </div>
-                    <div class="rating-pct" style="font-size:38px;" id="sScore">--</div>
+                    <div class="rating-pct" style="font-size:38px;" id="sScore"></div>
                 </div>
                 <div class="bio-strip" id="sBio"></div>
             </div>
@@ -211,27 +208,35 @@
 
     <div id="viewH2h" class="hidden">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom: 12px;">
-            <div><select id="selPlayerA"></select></div>
-            <div><select id="selPlayerB"></select></div>
+            <div>
+                <select id="h2hRoleA" onchange="runH2hDataPipeline()"></select>
+                <select id="selPlayerA" style="margin-top:6px;"></select>
+            </div>
+            <div>
+                <select id="h2hRoleB" onchange="runH2hDataPipeline()"></select>
+                <select id="selPlayerB" style="margin-top:6px;"></select>
+            </div>
         </div>
         <div class="profile-deck">
             <div class="scout-card">
                 <div class="card-header-block">
                     <div><div class="p-name" id="nameA">-</div><div class="p-club" id="clubA">-</div></div>
-                    <div class="rating-pct" id="scoreA">--</div>
+                    <div class="rating-pct" id="scoreA"></div>
                 </div>
                 <div class="bio-strip" id="bioA"></div>
             </div>
             <div class="scout-card">
                 <div class="card-header-block">
                     <div><div class="p-name" id="nameB">-</div><div class="p-club" id="clubB">-</div></div>
-                    <div class="rating-pct" id="scoreB">--</div>
+                    <div class="rating-pct" id="scoreB"></div>
                 </div>
                 <div class="bio-strip" id="bioB"></div>
             </div>
         </div>
-        <h3>Attribute Comparison Matrix</h3>
-        <div class="fm-matrix-wrapper" id="h2hMatrixContainer" style="grid-template-columns:1fr;"></div>
+        <div class="profile-deck" style="margin-top:14px;">
+            <div class="fm-column" id="h2hMatrixContainerA"></div>
+            <div class="fm-column" id="h2hMatrixContainerB"></div>
+        </div>
     </div>
 
     <div id="viewList" class="hidden">
@@ -247,24 +252,23 @@
         let ACTIVE_ROLE_FILTER = "all"; 
 
         const roleRequiredWeights = {
-            "BallPlayingCB": { type: "CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
-            "ShotBlocker": { type: "CB", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
-            "Wingback": { type: "FB", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
-            "WideCB": { type: "CB", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
-            "DLP": { type: "MF", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
-            "BallWinner": { type: "MF", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
-            "BoxToBox": { type: "MF", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
-            "Playmaker": { type: "AM", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
-            "TargetMan": { type: "ST", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
-            "InsideForward": { type: "FW", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
-            "Winger": { type: "FW", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
-            "PressingForward": { type: "ST", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
-            "False9": { type: "ST", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
-            "ShotStopper": { type: "GK", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
-            "SweeperKeeper": { type: "GK", keys: ["Reflexes", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
+            "BallPlayingCB": { type: "CB", allowed: ["CB"], label: "Ball-Playing CB", keys: ["Tackling", "Marking", "Positioning", "Passing", "Composure", "JumpingReach"] },
+            "ShotBlocker": { type: "CB", allowed: ["CB"], label: "Stopper", keys: ["Tackling", "Marking", "Positioning", "Heading", "Bravery", "Strength"] },
+            "Wingback": { type: "FB", allowed: ["FB"], label: "Wingback", keys: ["Crossing", "Dribbling", "Stamina", "Pace", "Acceleration", "Work Rate"] },
+            "WideCB": { type: "CB", allowed: ["CB", "FB"], label: "Wide Centre Back", keys: ["Tackling", "Marking", "Positioning", "Pace", "Stamina", "Strength"] },
+            "DLP": { type: "MF", allowed: ["MF", "AM"], label: "Deep Progressor", keys: ["Passing", "Technique", "Vision", "Composure", "Decisions", "Teamwork"] },
+            "BallWinner": { type: "MF", allowed: ["MF"], label: "Destroyer", keys: ["Tackling", "Aggression", "Work Rate", "Stamina", "Positioning", "Teamwork"] },
+            "BoxToBox": { type: "MF", allowed: ["MF"], label: "Box-to-Box Engine", keys: ["Stamina", "Work Rate", "Passing", "Tackling", "OffTheBall", "Acceleration"] },
+            "Playmaker": { type: "AM", allowed: ["MF", "AM"], label: "Playmaker", keys: ["Vision", "Passing", "Technique", "FirstTouch", "Composure", "Flair"] },
+            "TargetMan": { type: "ST", allowed: ["ST"], label: "Clinical No.9", keys: ["Finishing", "Heading", "JumpingReach", "Strength", "Composure", "OffTheBall"] },
+            "InsideForward": { type: "FW", allowed: ["FW", "ST"], label: "Inside Forward", keys: ["Dribbling", "Finishing", "Acceleration", "Pace", "Agility", "Technique"] },
+            "Winger": { type: "FW", allowed: ["FW"], label: "Winger", keys: ["Crossing", "Dribbling", "Pace", "Acceleration", "Agility", "Stamina"] },
+            "PressingForward": { type: "ST", allowed: ["ST"], label: "Pressing Forward", keys: ["Work Rate", "Stamina", "Aggression", "Finishing", "Acceleration", "Teamwork"] },
+            "False9": { type: "ST", allowed: ["FW", "ST", "AM"], label: "False 9", keys: ["Passing", "FirstTouch", "Vision", "Decisions", "Composure", "OffTheBall"] },
+            "ShotStopper": { type: "GK", allowed: ["GK"], label: "Traditional Shot Stopper", keys: ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "Anticipation", "Agility"] },
+            "SweeperKeeper": { type: "GK", allowed: ["GK"], label: "Sweeper Keeper", keys: ["Reflexes", "Kicking", "Passing", "FirstTouch", "RushingOutTendency", "Composure"] }
         };
 
-        // Custom Accordion Panel Handlers
         function toggleAccordionDropdown() { document.getElementById('dropdownMenuPanel').classList.toggle('hidden'); }
         function toggleSection(id, event) { event.stopPropagation(); document.getElementById(id).classList.toggle('hidden'); event.target.classList.toggle('rotated'); }
         
@@ -283,8 +287,9 @@
                 WORLD_CUP_DATABASE = parseCSVEngine(csvText);
                 buildGlobalSelectors();
                 runDataPipeline();
+                runH2hDataPipeline();
             } catch (error) {
-                console.log("Error pipeline line read error", error);
+                console.log("Database parse sync error matrix lines missing", error);
             }
         }
 
@@ -304,35 +309,29 @@
 
         function buildGlobalSelectors() {
             const sS = document.getElementById('selSinglePlayer');
-            const sA = document.getElementById('selPlayerA');
-            const sB = document.getElementById('selPlayerB');
+            const hA = document.getElementById('h2hRoleA');
+            const hB = document.getElementById('h2hRoleB');
             
-            sS.innerHTML = ''; sA.innerHTML = ''; sB.innerHTML = '';
+            sS.innerHTML = ''; hA.innerHTML = ''; hB.innerHTML = '';
             
-            // Populates options globally from all 1248 rows immediately upon initialization
+            hA.appendChild(new Option("All Positions / Roles", "all"));
+            hB.appendChild(new Option("All Positions / Roles", "all"));
+            
+            Object.keys(roleRequiredWeights).forEach(rk => {
+                hA.appendChild(new Option(roleRequiredWeights[rk].label, rk));
+                hB.appendChild(new Option(roleRequiredWeights[rk].label, rk));
+            });
+
             WORLD_CUP_DATABASE.forEach(p => {
                 let label = `${p.CleanName} (${p.Position} - ${p.Nation})`;
                 sS.appendChild(new Option(label, p.Player));
-                sA.appendChild(new Option(label, p.Player));
-                sB.appendChild(new Option(label, p.Player));
             });
-            if(sB.options[1]) sB.selectedIndex = 1;
         }
 
         function computeOverallRoleScore(player, roleKey) {
             let config = roleRequiredWeights[roleKey];
             if (!config) return 40;
-            
-            // Validate positions against finely split groups
-            if (roleKey === "WideCB" && !["CB", "FB"].includes(player.Position)) return 40;
-            if (roleKey === "False9" && !["FW", "ST", "AM"].includes(player.Position)) return 40;
-            if (roleKey === "DLP" && !["MF", "AM"].includes(player.Position)) return 40;
-            if (roleKey === "Playmaker" && !["MF", "AM"].includes(player.Position)) return 40;
-            if (roleKey === "InsideForward" && !["FW", "ST"].includes(player.Position)) return 40;
-            
-            if (roleKey !== "WideCB" && roleKey !== "False9" && roleKey !== "DLP" && roleKey !== "Playmaker" && roleKey !== "InsideForward") {
-                if (player.Position !== config.type) return 40;
-            }
+            if (!config.allowed.includes(player.Position)) return 40;
 
             let total = 0;
             config.keys.forEach(k => { total += (parseFloat(player[k]) || 10); });
@@ -350,46 +349,62 @@
 
         function runDataPipeline() {
             if (WORLD_CUP_DATABASE.length === 0) return;
-
             const nation = document.getElementById('nationSelector').value;
             const query = document.getElementById('playerSearch').value.toLowerCase();
 
-            // Core Search & Filter Execution Loop
             let filtered = WORLD_CUP_DATABASE;
             if (nation !== 'all') filtered = filtered.filter(p => p.Nation === nation);
             if (query) filtered = filtered.filter(p => p.CleanName.toLowerCase().includes(query) || p.Club.toLowerCase().includes(query));
 
-            // Apply macro accordion filters if selected
             if (ACTIVE_ROLE_FILTER === "GK") filtered = filtered.filter(p => p.Position === "GK");
             else if (ACTIVE_ROLE_FILTER === "CB_FB") filtered = filtered.filter(p => ["CB", "FB"].includes(p.Position));
             else if (ACTIVE_ROLE_FILTER === "MF_AM") filtered = filtered.filter(p => ["MF", "AM"].includes(p.Position));
             else if (ACTIVE_ROLE_FILTER === "FW_ST") filtered = filtered.filter(p => ["FW", "ST"].includes(p.Position));
             else if (ACTIVE_ROLE_FILTER !== "all") {
-                // If specific sub-role chosen, match its allowed category group
-                let c = roleRequiredWeights[ACTIVE_ROLE_FILTER];
-                if (ACTIVE_ROLE_FILTER === "WideCB") filtered = filtered.filter(p => ["CB", "FB"].includes(p.Position));
-                else filtered = filtered.filter(p => p.Position === c.type || (ACTIVE_ROLE_FILTER === "Playmaker" && p.Position === "AM"));
+                let config = roleRequiredWeights[ACTIVE_ROLE_FILTER];
+                filtered = filtered.filter(p => config.allowed.includes(p.Position));
             }
 
-            // Sync single profile main selection option line
             const sS = document.getElementById('selSinglePlayer');
             const prevVal = sS.value; sS.innerHTML = '';
             filtered.forEach(p => { sS.appendChild(new Option(`${p.CleanName} (${p.Position} - ${p.Nation})`, p.Player)); });
+            
             if (filtered.some(p => p.Player === prevVal)) sS.value = prevVal;
             else if (filtered[0]) sS.value = filtered[0].Player;
 
-            // Generate Sorted Rankings
             let ranked = [...filtered];
-            if (ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER)) {
+            let isSpecificRole = ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER);
+            if (isSpecificRole) {
                 ranked.forEach(p => p.fitScore = computeOverallRoleScore(p, ACTIVE_ROLE_FILTER));
                 ranked.sort((a,b) => b.fitScore - a.fitScore);
-            } else {
-                ranked.forEach(p => p.fitScore = 75); 
             }
 
-            renderRankingsLayout(ranked);
+            renderRankingsLayout(ranked, isSpecificRole);
             renderRosterLayout(filtered);
             renderSingleCardLayout();
+        }
+
+        function runH2hDataPipeline() {
+            const roleA = document.getElementById('h2hRoleA').value;
+            const roleB = document.getElementById('h2hRoleB').value;
+            
+            let listA = WORLD_CUP_DATABASE;
+            let listB = WORLD_CUP_DATABASE;
+            
+            if (roleA !== "all") listA = listA.filter(p => roleRequiredWeights[roleA].allowed.includes(p.Position));
+            if (roleB !== "all") listB = listB.filter(p => roleRequiredWeights[roleB].allowed.includes(p.Position));
+            
+            const sA = document.getElementById('selPlayerA');
+            const sB = document.getElementById('selPlayerB');
+            const prevA = sA.value; const prevB = sB.value;
+            
+            sA.innerHTML = ''; sB.innerHTML = '';
+            listA.forEach(p => sA.appendChild(new Option(`${p.CleanName} (${p.Position} - ${p.Nation})`, p.Player)));
+            listB.forEach(p => sB.appendChild(new Option(`${p.CleanName} (${p.Position} - ${p.Nation})`, p.Player)));
+            
+            if (listA.some(p => p.Player === prevA)) sA.value = prevA; else if (listA[0]) sA.value = listA[0].Player;
+            if (listB.some(p => p.Player === prevB)) sB.value = prevB; else if (listB[1]) sB.value = listB[1].Player;
+            
             renderComparisonCards();
         }
 
@@ -398,24 +413,48 @@
             if (!p) return;
 
             let displayRole = (ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER)) ? ACTIVE_ROLE_FILTER : "";
-            let score = displayRole ? `${computeOverallRoleScore(p, displayRole)}%` : "--";
-
             document.getElementById('sName').innerText = p.CleanName;
             document.getElementById('sClub').innerText = p.Club;
-            document.getElementById('sScore').innerText = score;
+            document.getElementById('sScore').innerText = displayRole ? `${computeOverallRoleScore(p, displayRole)}%` : "";
+            
             document.getElementById('sBio').innerHTML = `
                 <span>Nation: <strong>${p.Nation}</strong></span>
-                <span>Split Position: <strong>${p.Position}</strong></span>
+                <span>Position: <strong>${p.Position}</strong></span>
                 <span>Age: <strong>${p.Age}</strong></span>
                 <span>Height: <strong>${p.Height} cm</strong></span>
             `;
 
             document.getElementById('attrTitleHeader').innerText = displayRole ? `Attributes (Scouted for ${roleRequiredWeights[displayRole].label})` : "Attributes Profile";
-            
-            const container = document.getElementById('fmMatrixContainer');
-            container.innerHTML = '';
+            const container = document.getElementById('fmMatrixContainer'); container.innerHTML = '';
             let highlights = displayRole ? roleRequiredWeights[displayRole].keys : [];
 
+            buildFmLayoutColumns(container, p, highlights);
+        }
+
+        function renderComparisonCards() {
+            const pA = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerA').value);
+            const pB = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerB').value);
+            if (!pA || !pB) return;
+
+            const roleA = document.getElementById('h2hRoleA').value;
+            const roleB = document.getElementById('h2hRoleB').value;
+
+            document.getElementById('nameA').innerText = pA.CleanName; document.getElementById('clubA').innerText = pA.Club;
+            document.getElementById('scoreA').innerText = roleA !== "all" ? `${computeOverallRoleScore(pA, roleA)}%` : "";
+            document.getElementById('bioA').innerHTML = `<span>Nat: <strong>${pA.Nation}</strong></span><span>Pos: <strong>${pA.Position}</strong></span>`;
+
+            document.getElementById('nameB').innerText = pB.CleanName; document.getElementById('clubB').innerText = pB.Club;
+            document.getElementById('scoreB').innerText = roleB !== "all" ? `${computeOverallRoleScore(pB, roleB)}%` : "";
+            document.getElementById('bioB').innerHTML = `<span>Nat: <strong>${pB.Nation}</strong></span><span>Pos: <strong>${pB.Position}</strong></span>`;
+
+            const containerA = document.getElementById('h2hMatrixContainerA'); containerA.innerHTML = '';
+            const containerB = document.getElementById('h2hMatrixContainerB'); containerB.innerHTML = '';
+
+            buildFmLayoutColumns(containerA, pA, roleA !== "all" ? roleRequiredWeights[roleA].keys : []);
+            buildFmLayoutColumns(containerB, pB, roleB !== "all" ? roleRequiredWeights[roleB].keys : []);
+        }
+
+        function buildFmLayoutColumns(targetContainer, p, highlights) {
             let col1 = document.createElement('div'); col1.className = 'fm-column';
             let col2 = document.createElement('div'); col2.className = 'fm-column';
             let col3 = document.createElement('div'); col3.className = 'fm-column';
@@ -435,41 +474,7 @@
                 col3.innerHTML = '<div class="fm-column-title">Physical</div>';
                 ["Acceleration", "Agility", "Balance", "JumpingReach", "NaturalFitness", "Pace", "Stamina", "Strength"].forEach(a => appendFmRow(col3, a, p[a], highlights));
             }
-            container.appendChild(col1); container.appendChild(col2); container.appendChild(col3);
-        }
-
-        function renderComparisonCards() {
-            const pA = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerA').value);
-            const pB = WORLD_CUP_DATABASE.find(p => p.Player === document.getElementById('selPlayerB').value);
-            if (!pA || !pB) return;
-
-            let displayRole = (ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER)) ? ACTIVE_ROLE_FILTER : "";
-            document.getElementById('nameA').innerText = pA.CleanName; document.getElementById('clubA').innerText = pA.Club;
-            document.getElementById('scoreA').innerText = displayRole ? `${computeOverallRoleScore(pA, displayRole)}%` : "--";
-            document.getElementById('bioA').innerHTML = `<span>Nat: <strong>${pA.Nation}</strong></span><span>Pos: <strong>${pA.Position}</strong></span>`;
-
-            document.getElementById('nameB').innerText = pB.CleanName; document.getElementById('clubB').innerText = pB.Club;
-            document.getElementById('scoreB').innerText = displayRole ? `${computeOverallRoleScore(pB, displayRole)}%` : "--";
-            document.getElementById('bioB').innerHTML = `<span>Nat: <strong>${pB.Nation}</strong></span><span>Pos: <strong>${pB.Position}</strong></span>`;
-
-            const container = document.getElementById('h2hMatrixContainer'); container.innerHTML = '';
-            let attributesToCompare = pA.Position === "GK" ? 
-                ["Reflexes", "Handling", "OneOnOnes", "AerialReach", "CommandOfArea", "Kicking", "Passing", "Anticipation", "Composure", "Agility", "Pace"] :
-                ["Crossing", "Dribbling", "Finishing", "Passing", "Tackling", "Marking", "Technique", "Anticipation", "Composure", "Positioning", "OffTheBall", "Acceleration", "Pace", "Stamina", "Strength", "JumpingReach"];
-
-            attributesToCompare.forEach(attr => {
-                let vA = pA[attr] || 10; let vB = pB[attr] || 10;
-                let div = document.createElement('div'); div.className = 'fm-row';
-                let cA = vA >= 15 ? 'v-high' : (vA >= 11 ? 'v-med' : 'v-low');
-                let cB = vB >= 15 ? 'v-high' : (vB >= 11 ? 'v-med' : 'v-low');
-                
-                div.innerHTML = `
-                    <span class="fm-value ${cA}" style="text-align:left; width:50px;">${vA}</span>
-                    <span class="fm-label" style="text-align:center; width:100%; font-weight:600;">${attr.replace(/([A-Z])/g, ' $1').trim()}</span>
-                    <span class="fm-value ${cB}" style="text-align:right; width:50px;">${vB}</span>
-                `;
-                container.appendChild(div);
-            });
+            targetContainer.appendChild(col1); targetContainer.appendChild(col2); targetContainer.appendChild(col3);
         }
 
         function appendFmRow(parent, label, val, highlights) {
@@ -498,12 +503,12 @@
         document.getElementById('selPlayerA').addEventListener('change', renderComparisonCards);
         document.getElementById('selPlayerB').addEventListener('change', renderComparisonCards);
 
-        function renderRankingsLayout(list) {
+        function renderRankingsLayout(list, isSpecificRole) {
             const anchor = document.getElementById('rankingsAnchor');
             anchor.innerHTML = list.length === 0 ? '<div class="subtitle" style="text-align:center; padding:20px;">No matches found.</div>' : '';
             list.forEach((p, idx) => {
                 let div = document.createElement('div'); div.className = 'list-row';
-                let suffix = (ACTIVE_ROLE_FILTER !== "all" && !["GK","CB_FB","MF_AM","FW_ST"].includes(ACTIVE_ROLE_FILTER)) ? `${p.fitScore}% Match` : `Best: ${findBestSuitedRole(p)}`;
+                let suffix = isSpecificRole ? `${p.fitScore}% Match` : findBestSuitedRole(p);
                 div.innerHTML = `<div><div style="font-weight:700; color:white;">#${idx+1} ${p.CleanName} (${p.Position})</div><div style="font-size:11px; color:var(--text-muted);">${p.Club} — ${p.Nation}</div></div><div style="font-weight:800; color:var(--emerald-green);">${suffix}</div>`;
                 anchor.appendChild(div);
             });
